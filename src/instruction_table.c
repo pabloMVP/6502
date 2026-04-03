@@ -28,7 +28,7 @@ static const InstructionInfo instruction_table[256] = {
     [0x16] = { "ASL", op_asl_zeropage_x, ZEROPAGE_X_INDEXED, 2},
     [0x0E] = { "ASL", op_asl_absolute, ABSOLUTE, 3},
     [0x1E] = { "ASL", op_asl_absolute_X, ABSOLUTE_X_INDEXED, 3},
-
+    
     [0xA9] = { "LDA", op_lda_immediate, IMMEDIATE, 2 },
     [0xAA] = { "TAX", op_tax_implied, IMPLIED, 1 },
     [0xE8] = { "INX", op_inx_implied, IMPLIED, 1 },
