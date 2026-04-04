@@ -29,6 +29,35 @@ static const InstructionInfo instruction_table[256] = {
     [0x0E] = { "ASL", op_asl_absolute, ABSOLUTE, 3},
     [0x1E] = { "ASL", op_asl_absolute_X, ABSOLUTE_X_INDEXED, 3},
     
+    //BCC Branch on Carry Clear
+    [0x90] = { "LDA", op_bcc_relative, RELATIVE, 2 },
+    
+    //BCS Branch on Carry Set
+    [0xB0] = { "BCS", op_bcs_relative, RELATIVE, 2 },
+
+    //BEQ Branch on Result Zero
+    [0xF0] = { "BEQ", op_beq_relative, RELATIVE, 2 }, 
+
+    //BIT Test Bits in Memory with Accumulator
+    [0x24] = { "BIT", op_bit_zeropage, ZEROPAGE, 2 },
+    [0x2C] = { "BIT", op_bit_absolute, ABSOLUTE, 3 },
+
+    //BMI Branch on Result Minus
+    [0x30] = { "BMI", op_bmi_relative, RELATIVE, 2 },
+  
+    //BNE Branch on Result Not Zero
+    [0xD0] = { "BNE", op_bne_relative, RELATIVE, 2 },
+
+    //BPL Branch on Result Plus
+    [0x10] = { "BPL", op_bpl_relative, RELATIVE, 2 }, 
+
+    //BRK Force Break
+    [0x00] = { "BRK", op_brk_implied, IMPLIED, 1},
+
+    //BVC Branch on Overflow Clear
+    [0x50] = { "BVC", op_bvc_relative, RELATIVE, 2},
+
+
     [0xA9] = { "LDA", op_lda_immediate, IMMEDIATE, 2 },
     [0xAA] = { "TAX", op_tax_implied, IMPLIED, 1 },
     [0xE8] = { "INX", op_inx_implied, IMPLIED, 1 },

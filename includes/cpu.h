@@ -90,4 +90,32 @@ void op_asl_zeropage(CPU *cpu);
 void op_asl_zeropage_x(CPU *cpu);
 void op_asl_absolute(CPU *cpu);
 void op_asl_absolute_X(CPU *cpu);
+
+//BCC Branch on Carry Clear
+void op_bcc_relative(CPU *cpu);
+
+//BCS Branch on Carry Set
+void op_bcs_relative(CPU *cpu);
+
+//BEQ Branch on Result Zero
+void op_beq_relative(CPU *cpu);
+
+//BIT Test Bits in Memory with Accumulator
+void op_bit_zeropage(CPU *cpu);
+void op_bit_absolute(CPU *cpu);
+
+//BMI Branch on Result Minus
+void op_bmi_relative(CPU *cpu);
+
+//BNE Branch on Result Not Zero
+void op_bne_relative(CPU *cpu);
+
+//BPL Branch on Result Plus
+void op_bpl_relative(CPU *cpu);
+
+//BRK Force Break
+void op_brk_implied(CPU *cpu);
+
+//BVC Branch on Overflow Clear
+void op_bvc_relative(CPU *cpu);
 #endif // CPU_H
