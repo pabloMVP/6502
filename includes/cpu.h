@@ -2,6 +2,7 @@
 #define CPU_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "bus.h"
 
 typedef struct CPU CPU;
@@ -52,8 +53,10 @@ struct CPU {
 };
 
 void cpu_reset(CPU *cpu);
-
 void cpu_step(CPU *cpu);
+
+bool cpu_get_flag(const CPU *cpu, STATUS_FLAGS flag);
+void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set);
 
 uint8_t cpu_fetch(CPU *cpu);
 const InstructionInfo *cpu_decode(uint8_t opcode);
@@ -65,6 +68,7 @@ void op_inx_implied(CPU *cpu);
 void op_nop_implied(CPU *cpu);
 
 // ADC (Add Memory to Accumulator with Carry)
+void op_adc_common(CPU *cpu, uint8_t operand); //common behaviour adc
 void op_adc_immediate(CPU *cpu);
 void op_adc_zeropage(CPU *cpu);
 void op_adc_zeropage_x(CPU *cpu);
