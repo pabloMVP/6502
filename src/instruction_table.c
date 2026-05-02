@@ -36,7 +36,7 @@ static const InstructionInfo instruction_table[256] = {
     [0xB0] = { "BCS", op_bcs, RELATIVE, 2 },
 
     //BEQ Branch on Result Zero
-    [0xF0] = { "BEQ", op_beq, RELATIVE, 2 }, 
+    [0xF0] = { "BEQ", op_beq, RElATIVE, 2 }, 
 
     //BIT Test Bits in Memory with Accumulator
     [0x24] = { "BIT", op_bit, ZEROPAGE, 2 },
