@@ -11,7 +11,7 @@ void test_op_adc_immediate_basic(void){
     cpu.A = 0x10;
     cpu.P = 0x00;
     bus_write(cpu.bus, 0x8000, 0x05);
-    op_adc_immediate(&cpu);
+    cpu_execute(&cpu, IMMEDIATE, op_adc);
     assert(cpu.A == 0x15);
     assert(cpu.PC == 0x8001);
     assert(cpu_get_flag(&cpu, C) == false);
@@ -28,7 +28,7 @@ void test_op_adc_immediate_carry_zero(void){
     cpu.A = 0xFF;
     cpu.P = 0x00;
     bus_write(cpu.bus, 0x8000, 0x01);
-    op_adc_immediate(&cpu);
+    cpu_execute(&cpu, IMMEDIATE, op_adc);
     assert(cpu.A == 0x00);
     assert(cpu.PC == 0x8001);
     assert(cpu_get_flag(&cpu, C) == true);
@@ -46,7 +46,7 @@ void test_op_adc_immediate_overflow_signed(void){
     cpu.A = 0x50;
     cpu.P = 0x00;
     bus_write(cpu.bus, 0x8000, 0x50);
-    op_adc_immediate(&cpu);
+    cpu_execute(&cpu, IMMEDIATE, op_adc);
     assert(cpu.A == 0xA0);
     assert(cpu.PC == 0x8001);
     assert(cpu_get_flag(&cpu, V) == true);
