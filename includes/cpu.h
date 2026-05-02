@@ -34,7 +34,7 @@ typedef enum {
     ZEROPAGE_Y_INDEXED
 } ADDRESS_MODE;
 
-typedef void (*InstructionHandler)(CPU *cpu);
+typedef void (*InstructionHandler)(CPU *cpu, uint8_t operand);
 
 typedef struct {
     const char *mnemonic;
@@ -61,65 +61,13 @@ void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set);
 uint8_t cpu_fetch(CPU *cpu);
 const InstructionInfo *cpu_decode(uint8_t opcode);
 
-void op_not_implemented(CPU *cpu);
-void op_lda_immediate(CPU *cpu);
-void op_tax_implied(CPU *cpu);
-void op_inx_implied(CPU *cpu);
-void op_nop_implied(CPU *cpu);
-
 // ADC (Add Memory to Accumulator with Carry)
-void op_adc_common(CPU *cpu, uint8_t operand); //common behaviour adc
-void op_adc_immediate(CPU *cpu);
-void op_adc_zeropage(CPU *cpu);
-void op_adc_zeropage_x(CPU *cpu);
-void op_adc_absolute(CPU *cpu);
-void op_adc_absolute_X(CPU *cpu);
-void op_adc_absolute_Y(CPU *cpu);
-void op_adc_indirect_X(CPU *cpu);
-void op_adc_indirect_Y(CPU *cpu);
-
+void op_adc(CPU *cpu, uint8_t *operand);
 // AND (AND Memory with Accumulator)
-void op_and_immediate(CPU *cpu);
-void op_and_zeropage(CPU *cpu);
-void op_and_zeropage_x(CPU *cpu);
-void op_and_absolute(CPU *cpu);
-void op_and_absolute_X(CPU *cpu);
-void op_and_absolute_Y(CPU *cpu);
-void op_and_indirect_X(CPU *cpu);
-void op_and_indirect_Y(CPU *cpu);
+void op_and(CPU *cpu, uint8_t *operand); 
+// ASL (Shift Left One Bit (Memory or Accumulator))
+void op_asl(CPU *cpu, uint8_t *operand);
+// BCC (Branch on Carry Clear)
+void op_bcc(CPU *cpu, uint8_t *operand);
 
-// ASL Shift Left One Bit (Memory or Accumulator)
-void op_asl_accumulator(CPU *cpu);
-void op_asl_zeropage(CPU *cpu);
-void op_asl_zeropage_x(CPU *cpu);
-void op_asl_absolute(CPU *cpu);
-void op_asl_absolute_X(CPU *cpu);
-
-//BCC Branch on Carry Clear
-void op_bcc_relative(CPU *cpu);
-
-//BCS Branch on Carry Set
-void op_bcs_relative(CPU *cpu);
-
-//BEQ Branch on Result Zero
-void op_beq_relative(CPU *cpu);
-
-//BIT Test Bits in Memory with Accumulator
-void op_bit_zeropage(CPU *cpu);
-void op_bit_absolute(CPU *cpu);
-
-//BMI Branch on Result Minus
-void op_bmi_relative(CPU *cpu);
-
-//BNE Branch on Result Not Zero
-void op_bne_relative(CPU *cpu);
-
-//BPL Branch on Result Plus
-void op_bpl_relative(CPU *cpu);
-
-//BRK Force Break
-void op_brk_implied(CPU *cpu);
-
-//BVC Branch on Overflow Clear
-void op_bvc_relative(CPU *cpu);
 #endif // CPU_H
