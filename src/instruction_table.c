@@ -36,7 +36,7 @@ static const InstructionInfo instruction_table[256] = {
     [0xB0] = { "BCS", op_bcs, RELATIVE, 2 },
 
     //BEQ Branch on Result Zero
-    [0xF0] = { "BEQ", op_beq, RElATIVE, 2 }, 
+    [0xF0] = { "BEQ", op_beq, RELATIVE, 2 }, 
 
     //BIT Test Bits in Memory with Accumulator
     [0x24] = { "BIT", op_bit, ZEROPAGE, 2 },
@@ -57,6 +57,28 @@ static const InstructionInfo instruction_table[256] = {
     //BVC Branch on Overflow Clear
     [0x50] = { "BVC", op_bvc, RELATIVE, 2},
 
+    //BVS Branch on Overflow Set
+    [0x70] = { "BVS", op_bvs, RELATIVE, 2},
+
+    //CLC Clear Carry Flag
+    [0x18] = { "CLC", op_clc, IMPLIED, 2},
+
+    //CLD Clear Decimal Mode
+    [0xD8] = { "CLD", op_cld, IMPLIED, 2},
+
+    //CLV Clear Overflow Flag
+    [0xB8] = { "CLV", op_clv, IMPLIED, 2},
+
+    //CMP Compare Memory with Accumulator
+    [0xC9] = { "CMP", op_cmp, IMMEDIATE, 2},
+    [0xC5] = { "CMP", op_cmp, ZEROPAGE, 3},
+    [0xD5] = { "CMP", op_cmp, ZEROPAGE_X_INDEXED, 4},
+    [0xCD] = { "CMP", op_cmp, ABSOLUTE, 4},
+    [0xDD] = { "CMP", op_cmp, ABSOLUTE_X_INDEXED, 4},
+    [0xD9] = { "CMP", op_cmp, ABSOLUTE_Y_INDEXED, 4},
+    [0xC1] = { "CMP", op_cmp, X_INDEXED_INDIRECT, 6},
+    [0xD1] = { "CMP", op_cmp, INDIRECT_Y_INDEXED, 5},
+
 
     [0xA9] = { "LDA", op_lda, IMMEDIATE, 2 },
     [0xAA] = { "TAX", op_tax, IMPLIED, 1 },
@@ -72,7 +94,7 @@ static const InstructionInfo not_implemented = {
     1
 };
 
-const InstructionInfo *cpu_decode(uint8_t opcode) {
+const InstructionInfo *cpu_decode(const uint8_t opcode) {
     if (instruction_table[opcode].handler == NULL) {
         return &not_implemented;
     }
@@ -127,6 +149,122 @@ void op_asl(CPU *cpu, uint8_t *operand){
 }
 
 void op_bcc(CPU *cpu, uint8_t *operand){
-
+    if (cpu_get_flag(cpu, C) == false) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
 }
-void op 
+
+void op_bcs(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, C) == true) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_beq(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, Z) == true){
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_bit(CPU *cpu, uint8_t *operand){
+    cpu_set_flag(cpu, N, (0x80 & *operand) != 0);
+    cpu_set_flag(cpu, C, (0x40 & *operand) != 0);
+    cpu_set_flag(cpu, Z, (*operand & cpu->A) == 0);
+}
+
+void op_bmi(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, N) == true) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_bne(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, Z) == false) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_bpl(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, N) == false) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_bvc(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, V) == false) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_bvs(CPU *cpu, uint8_t *operand){
+    if (cpu_get_flag(cpu, V) == true) 
+    {
+        cpu->PC += (int8_t)*operand;
+    }
+}
+
+void op_clc(CPU *cpu, uint8_t *operand){
+    cpu_set_flag(cpu, C, false);
+}
+
+void op_cld(CPU *cpu, uint8_t *operand){
+    cpu_set_flag(cpu, D, false);
+}
+
+void op_cli(CPU *cpu, uint8_t *operand){
+    cpu_set_flag(cpu, I, false);
+}
+
+void op_clv(CPU *cpu, uint8_t *operand){
+    cpu_set_flag(cpu, V, false);
+}
+
+void op_cmp(CPU *cpu, uint8_t *operand){
+    uint8_t result = cpu->A - *operand;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, C, cpu->A >= *operand); //Borrow one if M > A
+    cpu_set_flag(cpu, Z, (result == 0));
+}
+
+void op_cpx(CPU *cpu, uint8_t *operand){
+    uint8_t result = cpu->X - *operand;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, C, cpu->X >= *operand); //Borrow one if M > X
+    cpu_set_flag(cpu, Z, (result == 0));
+}
+
+void op_cpy(CPU *cpu, uint8_t *operand){
+    uint8_t result = cpu->Y - *operand;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, C, cpu->Y >= *operand); //Borrow one if M > Y
+    cpu_set_flag(cpu, Z, (result == 0));
+}
+
+void op_dec(CPU *cpu, uint8_t *operand){
+    
+}
+void op_brk(CPU *cpu, uint8_t *operand){
+    op_not_implemented(cpu, operand);
+}
+
+void op_lda(CPU *cpu, uint8_t *operand){
+    op_not_implemented(cpu, operand);
+}
+
+void op_tax(CPU *cpu, uint8_t *operand){
+    op_not_implemented(cpu, operand);
+}
+
+void op_inx(CPU *cpu, uint8_t *operand){
+    op_not_implemented(cpu, operand);
+}
+
+void op_nop_implied(CPU *cpu, uint8_t *operand){
+    op_not_implemented(cpu, operand);
+}

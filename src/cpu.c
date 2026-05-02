@@ -8,76 +8,92 @@ void cpu_reset(CPU *cpu){
 }
 
 uint8_t cpu_fetch(CPU *cpu){
-    uint8_t opcode = bus_read(cpu->bus, cpu->PC);
+    const uint8_t opcode = bus_read(cpu->bus, cpu->PC);
     cpu->PC+=1;
     return opcode;
 }
 
-const InstructionInfo* cpu_decode(CPU *cpu){
-    uint8_t opcode = cpu_fetch(cpu);
-    const InstructionInfo *instruction = cpu_decode(opcode);
-    return instruction;
-}
-
-void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler* handler){
+void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler handler){
     switch(address_mode)
     {
-        case ACCUMULATOR:
-            (*handler)(cpu, &(cpu->A));
+        case ACCUMULATOR: {
+            (handler)(cpu, &(cpu->A));
             break;
-        case IMMEDIATE:
+        }
+        case IMMEDIATE: {
             uint8_t operand = cpu_fetch(cpu);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case ZEROPAGE:
+        }
+        case ZEROPAGE: {
             uint8_t address = cpu_fetch(cpu);
             uint8_t operand = bus_read(cpu->bus, address);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case ZEROPAGE_X_INDEXED:
+        }
+        case ZEROPAGE_X_INDEXED: {
             uint8_t address = cpu_fetch(cpu);
             address += cpu->X;
             uint8_t operand = bus_read(cpu->bus, address);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case ABSOLUTE:
+        }
+        case ABSOLUTE: {
             uint8_t address_LL = cpu_fetch(cpu);
             uint8_t address_HH = cpu_fetch(cpu);
             uint16_t address = (uint16_t)(address_HH << 8) | address_LL; 
             uint8_t operand = bus_read(cpu->bus, address);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case ABSOLUTE_X_INDEXED:
+        }
+        case ABSOLUTE_X_INDEXED: {
             uint8_t address_LL = cpu_fetch(cpu);
             uint8_t address_HH = cpu_fetch(cpu);
             uint16_t address = (uint16_t)(address_HH << 8) | address_LL; 
             uint8_t operand = bus_read(cpu->bus, address + cpu->X);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case ABSOLUTE_Y_INDEXED:
+        }
+        case ABSOLUTE_Y_INDEXED: {
             uint8_t address_LL = cpu_fetch(cpu);
             uint8_t address_HH = cpu_fetch(cpu);
             uint16_t address = (uint16_t)(address_HH << 8) | address_LL; 
             uint8_t operand = bus_read(cpu->bus, address + cpu->Y);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case X_INDEXED_INDIRECT:
+        }
+        case X_INDEXED_INDIRECT: {
             uint8_t indirect_address_LL = cpu_fetch(cpu);
             uint8_t final_address_LL = bus_read(cpu->bus, (indirect_address_LL + cpu->X) & 0xFF); 
             uint8_t final_address_HH = bus_read(cpu->bus, (indirect_address_LL + cpu->X + 1) & 0xFF); 
             uint8_t operand = bus_read(cpu->bus, (uint16_t)(final_address_HH << 8) | final_address_LL);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case INDIRECT_Y_INDEXED:
+        }
+        case INDIRECT_Y_INDEXED: {
             uint8_t indirect_address_LL = cpu_fetch(cpu);
             uint8_t final_address_LL = bus_read(cpu->bus, indirect_address_LL & 0xFF); 
             uint8_t final_address_HH = bus_read(cpu->bus, (indirect_address_LL + 1) & 0xFF); 
             uint8_t operand = bus_read(cpu->bus, ((uint16_t)(final_address_HH << 8) | final_address_LL) + cpu->Y);
-            (*handler)(cpu, &operand);
+            (handler)(cpu, &operand);
             break;
-        case RELATIVE:
+        }
+        case RELATIVE: {
+            uint8_t operand = cpu_fetch(cpu);
+            (handler)(cpu, &operand);
             break;
+        }
+        case IMPLIED: {
+            (handler)(cpu, NULL);
+            break;
+        }
     }
+}
+
+void cpu_step(CPU *cpu){
+    uint8_t opc = cpu_fetch(cpu);
+    const InstructionInfo *instruction = cpu_decode(opc);
+    cpu_execute(cpu, instruction->address_mode, (instruction->handler));
 }
 
 void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set){

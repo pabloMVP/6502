@@ -34,7 +34,7 @@ typedef enum {
     ZEROPAGE_Y_INDEXED
 } ADDRESS_MODE;
 
-typedef void (*InstructionHandler)(CPU *cpu, uint8_t operand);
+typedef void (*InstructionHandler)(CPU *cpu, uint8_t *operand);
 
 typedef struct {
     const char *mnemonic;
@@ -60,6 +60,7 @@ void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set);
 
 uint8_t cpu_fetch(CPU *cpu);
 const InstructionInfo *cpu_decode(uint8_t opcode);
+void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler handler);
 
 // ADC (Add Memory to Accumulator with Carry)
 void op_adc(CPU *cpu, uint8_t *operand);
@@ -69,5 +70,26 @@ void op_and(CPU *cpu, uint8_t *operand);
 void op_asl(CPU *cpu, uint8_t *operand);
 // BCC (Branch on Carry Clear)
 void op_bcc(CPU *cpu, uint8_t *operand);
+void op_bcs(CPU *cpu, uint8_t *operand);
+void op_beq(CPU *cpu, uint8_t *operand);
+void op_bit(CPU *cpu, uint8_t *operand);
+void op_bmi(CPU *cpu, uint8_t *operand);
+void op_bne(CPU *cpu, uint8_t *operand);
+void op_bpl(CPU *cpu, uint8_t *operand);
+void op_brk(CPU *cpu, uint8_t *operand);
+void op_bvc(CPU *cpu, uint8_t *operand);
+void op_bvs(CPU *cpu, uint8_t *operand);
+void op_clc(CPU *cpu, uint8_t *operand);
+void op_cld(CPU *cpu, uint8_t *operand);
+void op_cli(CPU *cpu, uint8_t *operand);
+void op_clv(CPU *cpu, uint8_t *operand);
+void op_cmp(CPU *cpu, uint8_t *operand);
+void op_lda(CPU *cpu, uint8_t *operand);
+void op_tax(CPU *cpu, uint8_t *operand);
+void op_inx(CPU *cpu, uint8_t *operand);
+void op_nop_implied(CPU *cpu, uint8_t *operand);
+void op_not_implemented(CPU *cpu, uint8_t *operand);
+
+void op_and_immediate(CPU *cpu, uint8_t *operand);
 
 #endif // CPU_H
