@@ -102,27 +102,28 @@ const InstructionInfo *cpu_decode(const uint8_t opcode) {
     return &instruction_table[opcode];
 }
 
-void op_not_implemented(CPU *cpu, uint8_t *operand) {
+void op_not_implemented(CPU *cpu, Operand *operand) {
     (void)cpu;
     (void)operand;
 }
 
 // ADC implementations
 
-void op_adc(CPU *cpu, uint8_t *operand){
+void op_adc(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
     uint8_t carry = cpu_get_flag(cpu, C);
-    
-    uint16_t result = *operand + cpu->A + carry;
-    
+
+    uint16_t result = value + cpu->A + carry;
+
     uint8_t finalResult = (uint8_t)result;
 
     // Set flags
     cpu_set_flag(cpu, Z, finalResult == 0);
     cpu_set_flag(cpu, N, (finalResult & 0x80) != 0);
     cpu_set_flag(cpu, C, result > 0xFF);
-    if ((*operand & 0x80) == (cpu->A & 0x80))
+    if ((value & 0x80) == (cpu->A & 0x80))
     {
-        cpu_set_flag(cpu, V, (*operand & 0x80) != (finalResult & 0x80));
+        cpu_set_flag(cpu, V, (value & 0x80) != (finalResult & 0x80));
     }
     else
     {
@@ -133,138 +134,144 @@ void op_adc(CPU *cpu, uint8_t *operand){
     cpu->A = finalResult;
 }
 
-void op_and(CPU *cpu, uint8_t *operand){
-    cpu->A &= *operand;
+void op_and(CPU *cpu, Operand *operand){
+    cpu->A &= operand_read(cpu, operand);
 
     // Set flags
     cpu_set_flag(cpu, Z, cpu->A == 0);
     cpu_set_flag(cpu, N, (cpu->A & 0x80) != 0);
 }
 
-void op_asl(CPU *cpu, uint8_t *operand){
-    cpu_set_flag(cpu, C, (*operand & 0x80) != 0);
-    *operand <<= 1;
-    cpu_set_flag(cpu, N, (*operand & 0x80) != 0);
-    cpu_set_flag(cpu, Z, *operand == 0);
+void op_asl(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    cpu_set_flag(cpu, C, (value & 0x80) != 0);
+    value <<= 1;
+    operand_write(cpu, operand, value);
+    cpu_set_flag(cpu, N, (value & 0x80) != 0);
+    cpu_set_flag(cpu, Z, value == 0);
 }
 
-void op_bcc(CPU *cpu, uint8_t *operand){
+void op_bcc(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, C) == false) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_bcs(CPU *cpu, uint8_t *operand){
+void op_bcs(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, C) == true) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_beq(CPU *cpu, uint8_t *operand){
+void op_beq(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, Z) == true){
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_bit(CPU *cpu, uint8_t *operand){
-    cpu_set_flag(cpu, N, (0x80 & *operand) != 0);
-    cpu_set_flag(cpu, C, (0x40 & *operand) != 0);
-    cpu_set_flag(cpu, Z, (*operand & cpu->A) == 0);
+void op_bit(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    cpu_set_flag(cpu, N, (0x80 & value) != 0);
+    cpu_set_flag(cpu, C, (0x40 & value) != 0);
+    cpu_set_flag(cpu, Z, (value & cpu->A) == 0);
 }
 
-void op_bmi(CPU *cpu, uint8_t *operand){
+void op_bmi(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, N) == true) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_bne(CPU *cpu, uint8_t *operand){
+void op_bne(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, Z) == false) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_bpl(CPU *cpu, uint8_t *operand){
+void op_bpl(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, N) == false) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_bvc(CPU *cpu, uint8_t *operand){
+void op_bvc(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, V) == false) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_bvs(CPU *cpu, uint8_t *operand){
+void op_bvs(CPU *cpu, Operand *operand){
     if (cpu_get_flag(cpu, V) == true) 
     {
-        cpu->PC += (int8_t)*operand;
+        cpu->PC += (int8_t)operand_read(cpu, operand);
     }
 }
 
-void op_clc(CPU *cpu, uint8_t *operand){
+void op_clc(CPU *cpu, Operand *operand){
     cpu_set_flag(cpu, C, false);
 }
 
-void op_cld(CPU *cpu, uint8_t *operand){
+void op_cld(CPU *cpu, Operand *operand){
     cpu_set_flag(cpu, D, false);
 }
 
-void op_cli(CPU *cpu, uint8_t *operand){
+void op_cli(CPU *cpu, Operand *operand){
     cpu_set_flag(cpu, I, false);
 }
 
-void op_clv(CPU *cpu, uint8_t *operand){
+void op_clv(CPU *cpu, Operand *operand){
     cpu_set_flag(cpu, V, false);
 }
 
-void op_cmp(CPU *cpu, uint8_t *operand){
-    uint8_t result = cpu->A - *operand;
+void op_cmp(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = cpu->A - value;
     cpu_set_flag(cpu, N, (0x80 & result) != 0);
-    cpu_set_flag(cpu, C, cpu->A >= *operand); //Borrow one if M > A
+    cpu_set_flag(cpu, C, cpu->A >= value); //Borrow one if M > A
     cpu_set_flag(cpu, Z, (result == 0));
 }
 
-void op_cpx(CPU *cpu, uint8_t *operand){
-    uint8_t result = cpu->X - *operand;
+void op_cpx(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = cpu->X - value;
     cpu_set_flag(cpu, N, (0x80 & result) != 0);
-    cpu_set_flag(cpu, C, cpu->X >= *operand); //Borrow one if M > X
+    cpu_set_flag(cpu, C, cpu->X >= value); //Borrow one if M > X
     cpu_set_flag(cpu, Z, (result == 0));
 }
 
-void op_cpy(CPU *cpu, uint8_t *operand){
-    uint8_t result = cpu->Y - *operand;
+void op_cpy(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = cpu->Y - value;
     cpu_set_flag(cpu, N, (0x80 & result) != 0);
-    cpu_set_flag(cpu, C, cpu->Y >= *operand); //Borrow one if M > Y
+    cpu_set_flag(cpu, C, cpu->Y >= value); //Borrow one if M > Y
     cpu_set_flag(cpu, Z, (result == 0));
 }
 
-void op_dec(CPU *cpu, uint8_t *operand){
+void op_dec(CPU *cpu, Operand *operand){
     
 }
-void op_brk(CPU *cpu, uint8_t *operand){
+void op_brk(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }
 
-void op_lda(CPU *cpu, uint8_t *operand){
+void op_lda(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }
 
-void op_tax(CPU *cpu, uint8_t *operand){
+void op_tax(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }
 
-void op_inx(CPU *cpu, uint8_t *operand){
+void op_inx(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }
 
-void op_nop_implied(CPU *cpu, uint8_t *operand){
+void op_nop_implied(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }

@@ -1,7 +1,7 @@
 #include "cpu.h"
 
 #define STUB_HANDLER(name) \
-    void name(CPU *cpu, uint8_t *operand) { \
+    void name(CPU *cpu, Operand *operand) { \
         op_not_implemented(cpu, operand) ; \
     }
 
