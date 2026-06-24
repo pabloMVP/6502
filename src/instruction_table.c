@@ -71,19 +71,110 @@ static const InstructionInfo instruction_table[256] = {
 
     //CMP Compare Memory with Accumulator
     [0xC9] = { "CMP", op_cmp, IMMEDIATE, 2},
-    [0xC5] = { "CMP", op_cmp, ZEROPAGE, 3},
-    [0xD5] = { "CMP", op_cmp, ZEROPAGE_X_INDEXED, 4},
-    [0xCD] = { "CMP", op_cmp, ABSOLUTE, 4},
-    [0xDD] = { "CMP", op_cmp, ABSOLUTE_X_INDEXED, 4},
-    [0xD9] = { "CMP", op_cmp, ABSOLUTE_Y_INDEXED, 4},
-    [0xC1] = { "CMP", op_cmp, X_INDEXED_INDIRECT, 6},
-    [0xD1] = { "CMP", op_cmp, INDIRECT_Y_INDEXED, 5},
+    [0xC5] = { "CMP", op_cmp, ZEROPAGE, 2},
+    [0xD5] = { "CMP", op_cmp, ZEROPAGE_X_INDEXED, 2},
+    [0xCD] = { "CMP", op_cmp, ABSOLUTE, 3},
+    [0xDD] = { "CMP", op_cmp, ABSOLUTE_X_INDEXED, 3},
+    [0xD9] = { "CMP", op_cmp, ABSOLUTE_Y_INDEXED, 3},
+    [0xC1] = { "CMP", op_cmp, X_INDEXED_INDIRECT, 2},
+    [0xD1] = { "CMP", op_cmp, INDIRECT_Y_INDEXED, 2},
 
+    //DEC Decrement Memory by One
+    [0xC6] = { "DEC", op_dec, ZEROPAGE, 2},
+    [0xD6] = { "DEC", op_dec, ZEROPAGE_X_INDEXED, 2},
+    [0xCE] = { "DEC", op_dec, ABSOLUTE, 3},
+    [0xDE] = { "DEC", op_dec, ABSOLUTE_X_INDEXED, 3},
 
+    //DEX Decrement Index X by One
+    [0xCA] = { "DEX", op_dex, IMPLIED, 1},
+
+    //DEY Decrement Index Y by One
+    [0x88] = { "DEY", op_dey, IMPLIED, 1},
+
+    //EOR Exclusive-OR Memory with Accumulator
+    [0x49] = { "EOR", op_eor, IMMEDIATE, 2},
+    [0x45] = { "EOR", op_eor, ZEROPAGE, 2},
+    [0x55] = { "EOR", op_eor, ZEROPAGE_X_INDEXED, 2},
+    [0x4D] = { "EOR", op_eor, ABSOLUTE, 3},
+    [0x5D] = { "EOR", op_eor, ABSOLUTE_X_INDEXED, 3},
+    [0x59] = { "EOR", op_eor, ABSOLUTE_Y_INDEXED, 3},
+    [0x41] = { "EOR", op_eor, X_INDEXED_INDIRECT, 2},
+    [0x51] = { "EOR", op_eor, INDIRECT_Y_INDEXED, 2},
+
+    //INC Increment Memory by One
+    [0xE6] = { "INC", op_inc, ZEROPAGE, 2},
+    [0xF6] = { "INC", op_inc, ZEROPAGE_X_INDEXED, 2},
+    [0xEE] = { "INC", op_inc, ABSOLUTE, 3},
+    [0xFE] = { "INC", op_inc, ABSOLUTE_X_INDEXED, 3},
+
+    //INX Increment Index X by One
+    [0xE8] = { "INX", op_inx, IMPLIED, 1},
+
+    //INY Increment Index Y by One
+    [0xC8] = { "INY", op_iny, IMPLIED, 1},
+
+    //JMP Jump to New Location
+    [0x4C] = { "JMP", op_jmp, ABSOLUTE, 3},
+    [0x6C] = { "JMP", op_jmp, INDIRECT, 3},
+
+    //JSR Jump to New Location Saving Return Address
+    [0x20] = { "JSR", op_jsr, ABSOLUTE, 3},
+
+    //LDA Load Accumulator with Memory
     [0xA9] = { "LDA", op_lda, IMMEDIATE, 2 },
+    [0xA5] = { "LDA", op_lda, ZEROPAGE, 2 },
+    [0xB5] = { "LDA", op_lda, ZEROPAGE_X_INDEXED, 2 },
+    [0xAD] = { "LDA", op_lda, ABSOLUTE, 3 },
+    [0xBD] = { "LDA", op_lda, ABSOLUTE_X_INDEXED, 3 },
+    [0xB9] = { "LDA", op_lda, ABSOLUTE_Y_INDEXED, 3 },
+    [0xA1] = { "LDA", op_lda, X_INDEXED_INDIRECT, 2 },
+    [0xB1] = { "LDA", op_lda, INDIRECT_Y_INDEXED, 2 },
+
+    //LDX Load Index X with Memory
+    [0xA2] = { "LDX", op_ldx, IMMEDIATE, 2 },
+    [0xA6] = { "LDX", op_ldx, ZEROPAGE, 2 },
+    [0xB6] = { "LDX", op_ldx, ZEROPAGE_Y_INDEXED, 2 },
+    [0xAE] = { "LDX", op_ldx, ABSOLUTE, 3 },
+    [0xBE] = { "LDX", op_ldx, ABSOLUTE_Y_INDEXED, 3 },
+
+    //LDY Load Index X with Memory
+    [0xA0] = { "LDY", op_ldy, IMMEDIATE, 2 },
+    [0xA4] = { "LDY", op_ldy, ZEROPAGE, 2 },
+    [0xB4] = { "LDY", op_ldy, ZEROPAGE_X_INDEXED, 2 },
+    [0xAC] = { "LDY", op_ldy, ABSOLUTE, 3 },
+    [0xBC] = { "LDY", op_ldy, ABSOLUTE_X_INDEXED, 3 },
+
+    //LSR Shift One Bit Right (Memory or Accumulator)
+    [0x4A] = { "LSR", op_lsr, ACCUMULATOR, 1 },
+    [0x46] = { "LSR", op_lsr, ZEROPAGE, 2 },
+    [0x56] = { "LSR", op_lsr, ZEROPAGE_X_INDEXED, 2 },
+    [0x4E] = { "LSR", op_lsr, ABSOLUTE, 3 },
+    [0x5E] = { "LSR", op_lsr, ABSOLUTE_X_INDEXED, 3 },
+
+    //NOP No Operation
+    [0xEA] = { "NOP", op_nop, IMPLIED, 1 },
+
+    //ORA OR Memory with Accumulator
+    [0x09] = { "ORA", op_ora, IMMEDIATE, 2 },
+    [0x05] = { "ORA", op_ora, ZEROPAGE, 2 },
+    [0x15] = { "ORA", op_ora, ZEROPAGE_X_INDEXED, 2 },
+    [0x0D] = { "ORA", op_ora, ABSOLUTE, 3 },
+    [0x1D] = { "ORA", op_ora, ABSOLUTE_X_INDEXED, 3 },
+    [0x19] = { "ORA", op_ora, ABSOLUTE_Y_INDEXED, 3 },
+    [0x01] = { "ORA", op_ora, X_INDEXED_INDIRECT, 2 },
+    [0x11] = { "ORA", op_ora, INDIRECT_Y_INDEXED, 2 },
+
+    //PHA Push Accumulator on Stack 
+    [0x48] = { "PHA", op_pha, IMPLIED, 1 },
+
+    //PHP Push Processor Status on Stack
+    [0x08] = { "PHP", op_php, IMPLIED, 1 },
+
+    //PLA Pull Accumulator from Stack
+    [0x68] = { "PLA", op_pla, IMPLIED, 1 },
+
+    //PLA Pull Accumulator from Stack
     [0xAA] = { "TAX", op_tax, IMPLIED, 1 },
-    [0xE8] = { "INX", op_inx, IMPLIED, 1 },
-    [0xEA] = { "NOP", op_nop_implied, IMPLIED, 1 },
 
 };
 
@@ -174,7 +265,7 @@ void op_beq(CPU *cpu, Operand *operand){
 void op_bit(CPU *cpu, Operand *operand){
     uint8_t value = operand_read(cpu, operand);
     cpu_set_flag(cpu, N, (0x80 & value) != 0);
-    cpu_set_flag(cpu, C, (0x40 & value) != 0);
+    cpu_set_flag(cpu, V, (0x40 & value) != 0);
     cpu_set_flag(cpu, Z, (value & cpu->A) == 0);
 }
 
@@ -254,24 +345,132 @@ void op_cpy(CPU *cpu, Operand *operand){
 }
 
 void op_dec(CPU *cpu, Operand *operand){
-    
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = value - 1;
+    operand_write(cpu, operand, result);
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
 }
+
+void op_dex(CPU *cpu, Operand *operand){
+    uint8_t value = cpu->X;
+    uint8_t result = value - 1;
+    cpu->X = result;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_dey(CPU *cpu, Operand *operand){
+    uint8_t value = cpu->Y;
+    uint8_t result = value - 1;
+    cpu->Y = result;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_eor(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = cpu->A ^ value;
+    cpu->A = result;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_inc(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = value + 1;
+    operand_write(cpu, operand, result);
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_inx(CPU *cpu, Operand *operand){
+    uint8_t value = cpu->X;
+    uint8_t result = value + 1;
+    cpu->X = result;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+void op_iny(CPU *cpu, Operand *operand){
+    uint8_t value = cpu->Y;
+    uint8_t result = value + 1;
+    cpu->Y = result;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_jmp(CPU *cpu, Operand *operand){
+    cpu->PC = operand->loc;
+}
+
+void op_jsr(CPU *cpu, Operand *operand){
+    uint16_t ret = cpu->PC - 1;
+    uint8_t byte_HH = 0xFF & ((ret) >> 8);
+    uint8_t byte_LL = 0xFF & (ret);
+    cpu_push_byte(cpu, byte_HH);
+    cpu_push_byte(cpu, byte_LL);
+    cpu->PC = operand->loc;
+}
+
 void op_brk(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }
 
 void op_lda(CPU *cpu, Operand *operand){
-    op_not_implemented(cpu, operand);
+    uint8_t value = operand_read(cpu, operand);
+    cpu->A = value;
+    cpu_set_flag(cpu, N, (0x80 & value) != 0);
+    cpu_set_flag(cpu, Z, value == 0);
 }
 
+void op_ldx(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    cpu->X = value;
+    cpu_set_flag(cpu, N, (0x80 & value) != 0);
+    cpu_set_flag(cpu, Z, value == 0);
+}
+
+void op_ldy(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    cpu->Y = value;
+    cpu_set_flag(cpu, N, (0x80 & value) != 0);
+    cpu_set_flag(cpu, Z, value == 0);
+}
+
+void op_lsr(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = value >> 1;
+    cpu_set_flag(cpu, C, 0x01 & value);
+    operand_write(cpu, operand, result);
+    cpu_set_flag(cpu, N, 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_ora(CPU *cpu, Operand *operand){
+    uint8_t value = operand_read(cpu, operand);
+    uint8_t result = value | cpu-> A;
+    cpu->A = result;
+    cpu_set_flag(cpu, N, (0x80 & result) != 0);
+    cpu_set_flag(cpu, Z, result == 0);
+}
+
+void op_pha(CPU *cpu, Operand *operand){
+    cpu_push_byte(cpu, cpu->A);
+}
+
+void op_php(CPU *cpu, Operand *operand){
+    uint8_t status = (cpu->P) | (B | UNUSED);
+    cpu_push_byte(cpu, cpu->P);
+}
+
+void op_pla(CPU *cpu, Operand *operand){
+    
+}
 void op_tax(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }
 
-void op_inx(CPU *cpu, Operand *operand){
-    op_not_implemented(cpu, operand);
-}
 
-void op_nop_implied(CPU *cpu, Operand *operand){
+void op_nop(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);
 }

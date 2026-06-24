@@ -63,6 +63,8 @@ struct CPU {
 void cpu_reset(CPU *cpu);
 void cpu_step(CPU *cpu);
 
+void cpu_push_byte(CPU *cpu, uint8_t byte);
+
 bool cpu_get_flag(const CPU *cpu, STATUS_FLAGS flag);
 void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set);
 
@@ -94,8 +96,26 @@ void op_clv(CPU *cpu, Operand *operand);
 void op_cmp(CPU *cpu, Operand *operand);
 void op_lda(CPU *cpu, Operand *operand);
 void op_tax(CPU *cpu, Operand *operand);
+void op_cpy(CPU *cpu, Operand *operand);
+void op_cpx(CPU *cpu, Operand *operand);
+void op_dec(CPU *cpu, Operand *operand);
+void op_dex(CPU *cpu, Operand *operand);
+void op_dey(CPU *cpu, Operand *operand);
+void op_eor(CPU *cpu, Operand *operand);
+void op_inc(CPU *cpu, Operand *operand);
 void op_inx(CPU *cpu, Operand *operand);
-void op_nop_implied(CPU *cpu, Operand *operand);
+void op_iny(CPU *cpu, Operand *operand);
+void op_jmp(CPU *cpu, Operand *operand);
+void op_jsr(CPU *cpu, Operand *operand);
+void op_lda(CPU *cpu, Operand *operand);
+void op_ldx(CPU *cpu, Operand *operand);
+void op_ldy(CPU *cpu, Operand *operand);
+void op_lsr(CPU *cpu, Operand *operand);
+void op_ora(CPU *cpu, Operand *operand);
+void op_pha(CPU *cpu, Operand *operand);
+void op_php(CPU *cpu, Operand *operand);
+void op_pla(CPU *cpu, Operand *operand);
+void op_nop(CPU *cpu, Operand *operand);
 void op_not_implemented(CPU *cpu, Operand *operand);
 
 void op_and_immediate(CPU *cpu, Operand *operand);

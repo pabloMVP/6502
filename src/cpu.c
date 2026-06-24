@@ -99,8 +99,18 @@ void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler handler
             handler(cpu, NULL);
             break;
         }
-        case INDIRECT:
+        case INDIRECT: {
+            uint8_t ptr_LL = cpu_fetch(cpu);
+            uint8_t ptr_HH = cpu_fetch(cpu);
+            uint16_t pointer = (uint16_t)(ptr_HH << 8) | ptr_LL;
+            uint8_t addr_LL = bus_read(cpu->bus, pointer);
+            // Note that we are reproducing here the NMOS hardware bug.
+            uint8_t addr_HH = bus_read(cpu->bus, (uint16_t)(ptr_HH << 8) | (ptr_LL + 1));
+            uint16_t addr = (uint16_t)(addr_HH << 8) | addr_LL;
+            Operand operand = {.isAccumulator = false, .loc = addr};
+            handler(cpu, &operand);
             break;
+        }
     }
 }
 
@@ -108,6 +118,12 @@ void cpu_step(CPU *cpu){
     uint8_t opc = cpu_fetch(cpu);
     const InstructionInfo *instruction = cpu_decode(opc);
     cpu_execute(cpu, instruction->address_mode, (instruction->handler));
+}
+
+void cpu_push_byte(CPU *cpu, uint8_t byte){
+    uint16_t stack_addr = 0x0100 + cpu->S;
+    bus_write(cpu->bus, stack_addr, byte);
+    cpu->S-=1;
 }
 
 void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set){
