@@ -5,6 +5,8 @@ void cpu_reset(CPU *cpu){
     cpu->PC = (uint16_t)bus_read(cpu->bus, 0xFFFC) | ((uint16_t)bus_read(cpu->bus, 0xFFFD) << 8);
     cpu->S = 0xFF;
     cpu->A = cpu->X = cpu->Y = cpu->P = 0x00; //we choose zero initialization as our own policy, given there is no defined behaviour for this
+    cpu->irq = false;
+    cpu->nmi = false;
 }
 
 uint8_t cpu_fetch(CPU *cpu){
@@ -115,9 +117,40 @@ void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler handler
 }
 
 void cpu_step(CPU *cpu){
+    if (cpu->nmi){
+        cpu->nmi = false;
+        cpu_interrupt(cpu, VECTOR_NMI, false);
+        return;
+    }
+    if (cpu->irq && cpu_get_flag(cpu, I) == false){
+        cpu_interrupt(cpu, VECTOR_IRQ, false);
+        return;
+    }
     uint8_t opc = cpu_fetch(cpu);
     const InstructionInfo *instruction = cpu_decode(opc);
     cpu_execute(cpu, instruction->address_mode, (instruction->handler));
+}
+
+void cpu_interrupt(CPU *cpu, SYSTEM_VECTOR vector, bool set_break){
+    uint8_t pc_LL = cpu->PC & 0xFF;
+    uint8_t pc_HH = (cpu->PC >> 8);
+    cpu_push_byte(cpu, pc_HH);
+    cpu_push_byte(cpu, pc_LL);
+    
+    //Save status
+    uint8_t status = cpu->P | UNUSED;
+    if (set_break){
+        status |= B;
+    }
+    else{
+        status &= ~B;
+    }
+    cpu_push_byte(cpu, status);
+    
+    cpu_set_flag(cpu, I, true); //Sets Interrupt flag
+    uint8_t interrupt_vec_LL = bus_read(cpu->bus, vector);
+    uint8_t interrupt_vec_HH = bus_read(cpu->bus, vector+1);
+    cpu->PC = (uint16_t)(interrupt_vec_HH << 8) | interrupt_vec_LL;
 }
 
 void cpu_push_byte(CPU *cpu, uint8_t byte){

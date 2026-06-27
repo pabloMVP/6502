@@ -488,10 +488,6 @@ void op_jsr(CPU *cpu, Operand *operand){
     cpu->PC = operand->loc;
 }
 
-void op_brk(CPU *cpu, Operand *operand){
-    op_not_implemented(cpu, operand);
-}
-
 void op_lda(CPU *cpu, Operand *operand){
     uint8_t value = operand_read(cpu, operand);
     cpu->A = value;
@@ -670,5 +666,11 @@ void op_tya(CPU *cpu, Operand *operand){
 }
 
 void op_nop(CPU *cpu, Operand *operand){
-    op_not_implemented(cpu, operand);
+    
+}
+
+void op_brk(CPU *cpu, Operand *operand){
+    //Save PC to recover
+    cpu->PC+=1;
+    cpu_interrupt(cpu, VECTOR_IRQ, true);
 }

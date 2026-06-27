@@ -34,6 +34,12 @@ typedef enum {
     ZEROPAGE_Y_INDEXED
 } ADDRESS_MODE;
 
+typedef enum {
+    VECTOR_NMI = 0xFFFA,
+    VECTOR_RESET = 0xFFFC,
+    VECTOR_IRQ = 0xFFFE // both for IRQ and BRK
+} SYSTEM_VECTOR;
+
 typedef struct {
     bool isAccumulator;
     uint16_t loc;
@@ -56,12 +62,17 @@ struct CPU {
     uint8_t S; // stack pointer
     uint8_t A, X, Y; // registers
     uint8_t P; // processor status flags
-
+    bool irq;
+    bool nmi;
     Bus* bus;
 };
 
 void cpu_reset(CPU *cpu);
 void cpu_step(CPU *cpu);
+uint8_t cpu_fetch(CPU *cpu);
+const InstructionInfo *cpu_decode(uint8_t opcode);
+void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler handler);
+void cpu_interrupt(CPU *cpu, SYSTEM_VECTOR vector, bool set_break);
 
 void cpu_push_byte(CPU *cpu, uint8_t byte);
 uint8_t cpu_pull_byte(CPU *cpu); 
@@ -69,9 +80,6 @@ uint8_t cpu_pull_byte(CPU *cpu);
 bool cpu_get_flag(const CPU *cpu, STATUS_FLAGS flag);
 void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set);
 
-uint8_t cpu_fetch(CPU *cpu);
-const InstructionInfo *cpu_decode(uint8_t opcode);
-void cpu_execute(CPU *cpu, ADDRESS_MODE address_mode, InstructionHandler handler);
 
 // ADC (Add Memory to Accumulator with Carry)
 void op_adc(CPU *cpu, Operand *operand);
