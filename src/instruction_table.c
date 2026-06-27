@@ -173,8 +173,84 @@ static const InstructionInfo instruction_table[256] = {
     //PLA Pull Accumulator from Stack
     [0x68] = { "PLA", op_pla, IMPLIED, 1 },
 
-    //PLA Pull Accumulator from Stack
+    //PLP Pull Processor Status from Stack
+    [0x28] = { "PLP", op_plp, IMPLIED, 1 },
+
+    //ROL Rotate One Bit Left (Memory or Accumulator)
+    [0x2A] = { "ROL", op_rol, ACCUMULATOR, 1 },
+    [0x26] = { "ROL", op_rol, ZEROPAGE, 2 },
+    [0x36] = { "ROL", op_rol, ZEROPAGE_X_INDEXED, 2 },
+    [0x2E] = { "ROL", op_rol, ABSOLUTE, 3 },
+    [0x3E] = { "ROL", op_rol, ABSOLUTE_X_INDEXED, 3 },
+
+    //ROR Rotate One Bit Right (Memory or Accumulator)
+    [0x6A] = { "ROR", op_ror, ACCUMULATOR, 1 },
+    [0x66] = { "ROR", op_ror, ZEROPAGE, 2 },
+    [0x76] = { "ROR", op_ror, ZEROPAGE_X_INDEXED, 2 },
+    [0x6E] = { "ROR", op_ror, ABSOLUTE, 3 },
+    [0x7E] = { "ROR", op_ror, ABSOLUTE_X_INDEXED, 3 },
+
+    //RTI Return from Interrupt
+    [0x40] = { "RTI", op_rti, IMPLIED, 1 },
+    
+    //RTS Return from Subroutine
+    [0x60] = { "RTS", op_rts, IMPLIED, 1 },
+
+    //SBC Subtract Memory from Accumulator with Borrow
+    [0xE9] = { "SBC", op_sbc, IMMEDIATE, 2 },
+    [0xE5] = { "SBC", op_sbc, ZEROPAGE, 2 },
+    [0xF5] = { "SBC", op_sbc, ZEROPAGE_X_INDEXED, 2 },
+    [0xED] = { "SBC", op_sbc, ABSOLUTE, 3 },
+    [0xFD] = { "SBC", op_sbc, ABSOLUTE_X_INDEXED, 3 },
+    [0xF9] = { "SBC", op_sbc, ABSOLUTE_Y_INDEXED, 3 },
+    [0xE1] = { "SBC", op_sbc, X_INDEXED_INDIRECT, 2 },
+    [0xF1] = { "SBC", op_sbc, INDIRECT_Y_INDEXED, 2 },
+
+    //SEC Set Carry Flag
+    [0x38] = { "SEC", op_sec, IMPLIED, 1 },
+
+    //SED Set Decimal Flag
+    [0xF8] = { "SED", op_sed, IMPLIED, 1 },
+
+    //SEI Set Interrupt Flag
+    [0x78] = { "SEI", op_sei, IMPLIED, 1 },
+
+    //STA Store Accumulator in Memory
+    [0x85] = { "STA", op_sta, ZEROPAGE, 2},
+    [0x95] = { "STA", op_sta, ZEROPAGE_X_INDEXED, 2},
+    [0x8D] = { "STA", op_sta, ABSOLUTE, 3},
+    [0x9D] = { "STA", op_sta, ABSOLUTE_X_INDEXED, 3},
+    [0x99] = { "STA", op_sta, ABSOLUTE_Y_INDEXED, 3},
+    [0x81] = { "STA", op_sta, X_INDEXED_INDIRECT, 2},
+    [0x91] = { "STA", op_sta, INDIRECT_Y_INDEXED, 2},
+
+    //STX Store Index X in Memory
+    [0x86] = { "STX", op_stx, ZEROPAGE, 2},
+    [0x96] = { "STX", op_stx, ZEROPAGE_Y_INDEXED, 2},
+    [0x8E] = { "STX", op_stx, ABSOLUTE, 3},
+
+    //STY Store Index Y in Memory
+    [0x84] = { "STY", op_sty, ZEROPAGE, 2},
+    [0x94] = { "STY", op_sty, ZEROPAGE_Y_INDEXED, 2},
+    [0x8C] = { "STY", op_sty, ABSOLUTE, 3},
+
+    //TAX Transfer Accumulator to Index X
     [0xAA] = { "TAX", op_tax, IMPLIED, 1 },
+
+    //TAY Transfer Accumulator to Index Y
+    [0xA8] = { "TAY", op_tay, IMPLIED, 1 },
+
+    //TSX Transfer Stack Pointer to Index X
+    [0xBA] = { "TSX", op_tsx, IMPLIED, 1 },
+
+    //TXA Transfer Index X to Accumulator
+    [0x8A] = { "TXA", op_txa, IMPLIED, 1 },
+
+    //TXS Transfer Index X to Stack Register
+    [0x9A] = { "TXS", op_txs, IMPLIED, 1 },
+
+    //TYA Transfer Index Y to Accumulator
+    [0x98] = { "TYA", op_tya, IMPLIED, 1 },
 
 };
 
@@ -460,16 +536,138 @@ void op_pha(CPU *cpu, Operand *operand){
 
 void op_php(CPU *cpu, Operand *operand){
     uint8_t status = (cpu->P) | (B | UNUSED);
-    cpu_push_byte(cpu, cpu->P);
+    cpu_push_byte(cpu, status);
 }
 
 void op_pla(CPU *cpu, Operand *operand){
-    
-}
-void op_tax(CPU *cpu, Operand *operand){
-    op_not_implemented(cpu, operand);
+    cpu->A = cpu_pull_byte(cpu);
+    cpu_set_flag(cpu, N, (0x80 & cpu->A) != 0);
+    cpu_set_flag(cpu, Z, cpu->A == 0);
 }
 
+void op_plp(CPU *cpu, Operand *operand){
+    uint8_t status = cpu_pull_byte(cpu);
+    status &= (0xFF & ~B) | UNUSED;
+    cpu->P = status;
+}
+
+void op_rol(CPU *cpu, Operand *operand){
+    uint8_t val = operand_read(cpu, operand);
+    uint8_t newVal = (val << 1) | cpu_get_flag(cpu, C);
+    cpu_set_flag(cpu, C, 0x80 & val);
+    operand_write(cpu, operand, newVal);
+    cpu_set_flag(cpu, N, (0x80 & newVal) != 0);
+    cpu_set_flag(cpu, Z, newVal == 0);
+}
+
+void op_ror(CPU *cpu, Operand *operand){
+    uint8_t val = operand_read(cpu, operand);
+    uint8_t newVal = (val >> 1) | (cpu_get_flag(cpu, C) << 7);
+    cpu_set_flag(cpu, C, 0x01 & val);
+    operand_write(cpu, operand, newVal);
+    cpu_set_flag(cpu, N, (0x80 & newVal) != 0);
+    cpu_set_flag(cpu, Z, newVal == 0);
+}
+
+void op_rti(CPU *cpu, Operand *operand){
+    uint8_t status = cpu_pull_byte(cpu);
+    status &= (0xFF & ~B) | UNUSED;
+    cpu->P = status;
+    uint8_t pc_LL = cpu_pull_byte(cpu);
+    uint8_t pc_HH = cpu_pull_byte(cpu);
+    cpu->PC = (uint16_t)(pc_HH << 8) | pc_LL;
+}
+
+void op_rts(CPU *cpu, Operand *operand){
+    uint8_t pc_LL = cpu_pull_byte(cpu);
+    uint8_t pc_HH = cpu_pull_byte(cpu);
+    cpu->PC = (uint16_t)(pc_HH << 8) | pc_LL;
+    cpu->PC += 1;
+}
+
+void op_sbc(CPU *cpu, Operand *operand){
+    uint8_t value = ~operand_read(cpu, operand);
+    uint8_t carry = cpu_get_flag(cpu, C);
+
+    uint16_t result = value + cpu->A + carry;
+
+    uint8_t finalResult = (uint8_t)result;
+
+    // Set flags
+    cpu_set_flag(cpu, Z, finalResult == 0);
+    cpu_set_flag(cpu, N, (finalResult & 0x80) != 0);
+    cpu_set_flag(cpu, C, result > 0xFF);
+    if ((value & 0x80) == (cpu->A & 0x80))
+    {
+        cpu_set_flag(cpu, V, (value & 0x80) != (finalResult & 0x80));
+    }
+    else
+    {
+        cpu_set_flag(cpu, V, false);
+    }
+
+    // Update accumulator register
+    cpu->A = finalResult;
+}
+
+void op_sec(CPU *cpu, Operand *operand){
+    cpu_set_flag(cpu, C, true);
+}
+
+void op_sed(CPU *cpu, Operand *operand){
+    cpu_set_flag(cpu, D, true);
+}
+
+void op_sei(CPU *cpu, Operand *operand){
+    cpu_set_flag(cpu, I, true);
+}
+
+void op_sta(CPU *cpu, Operand *operand){
+    operand_write(cpu, operand, cpu->A);
+}
+
+void op_stx(CPU *cpu, Operand *operand){
+    operand_write(cpu, operand, cpu->X);
+}
+
+void op_sty(CPU *cpu, Operand *operand){
+    operand_write(cpu, operand, cpu->Y);
+}
+
+
+void op_tax(CPU *cpu, Operand *operand){
+    cpu->X = cpu->A;
+    cpu_set_flag(cpu, Z, cpu->A == 0);
+    cpu_set_flag(cpu, N, (cpu->A & 0x80) != 0);
+}
+
+void op_tay(CPU *cpu, Operand *operand){
+    cpu->Y = cpu->A;
+    cpu_set_flag(cpu, Z, cpu->A == 0);
+    cpu_set_flag(cpu, N, (cpu->A & 0x80) != 0);
+}
+
+void op_tsx(CPU *cpu, Operand *operand){
+    cpu->X = cpu->S;
+    cpu_set_flag(cpu, Z, cpu->S == 0);
+    cpu_set_flag(cpu, N, (cpu->S & 0x80) != 0);
+}
+
+void op_txa(CPU *cpu, Operand *operand){
+    cpu->A = cpu->X;
+    cpu_set_flag(cpu, Z, cpu->X == 0);
+    cpu_set_flag(cpu, N, (cpu->X & 0x80) != 0);
+}
+
+void op_txs(CPU *cpu, Operand *operand){
+    cpu->S = cpu->X;
+}
+
+void op_tya(CPU *cpu, Operand *operand){
+    cpu->A = cpu->Y;
+    cpu_set_flag(cpu, Z, cpu->Y == 0);
+    cpu_set_flag(cpu, N, (cpu->Y & 0x80) != 0);
+}
 
 void op_nop(CPU *cpu, Operand *operand){
     op_not_implemented(cpu, operand);

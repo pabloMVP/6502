@@ -64,6 +64,7 @@ void cpu_reset(CPU *cpu);
 void cpu_step(CPU *cpu);
 
 void cpu_push_byte(CPU *cpu, uint8_t byte);
+uint8_t cpu_pull_byte(CPU *cpu); 
 
 bool cpu_get_flag(const CPU *cpu, STATUS_FLAGS flag);
 void cpu_set_flag(CPU *cpu, STATUS_FLAGS flag, bool set);
@@ -115,6 +116,24 @@ void op_ora(CPU *cpu, Operand *operand);
 void op_pha(CPU *cpu, Operand *operand);
 void op_php(CPU *cpu, Operand *operand);
 void op_pla(CPU *cpu, Operand *operand);
+void op_plp(CPU *cpu, Operand *operand);
+void op_rol(CPU *cpu, Operand *operand);
+void op_ror(CPU *cpu, Operand *operand);
+void op_rti(CPU *cpu, Operand *operand);
+void op_rts(CPU *cpu, Operand *operand);
+void op_sbc(CPU *cpu, Operand *operand);
+void op_sec(CPU *cpu, Operand *operand);
+void op_sed(CPU *cpu, Operand *operand);
+void op_sei(CPU *cpu, Operand *operand);
+void op_sta(CPU *cpu, Operand *operand);
+void op_stx(CPU *cpu, Operand *operand);
+void op_sty(CPU *cpu, Operand *operand);
+void op_tax(CPU *cpu, Operand *operand);
+void op_tay(CPU *cpu, Operand *operand);
+void op_tsx(CPU *cpu, Operand *operand);
+void op_txa(CPU *cpu, Operand *operand);
+void op_txs(CPU *cpu, Operand *operand);
+void op_tya(CPU *cpu, Operand *operand);
 void op_nop(CPU *cpu, Operand *operand);
 void op_not_implemented(CPU *cpu, Operand *operand);
 
