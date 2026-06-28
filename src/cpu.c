@@ -2,9 +2,10 @@
 #include <stddef.h>
 
 void cpu_reset(CPU *cpu){
-    cpu->PC = (uint16_t)bus_read(cpu->bus, 0xFFFC) | ((uint16_t)bus_read(cpu->bus, 0xFFFD) << 8);
-    cpu->S = 0xFF;
-    cpu->A = cpu->X = cpu->Y = cpu->P = 0x00; //we choose zero initialization as our own policy, given there is no defined behaviour for this
+    cpu->PC = (uint16_t)bus_read(cpu->bus, VECTOR_RESET) | ((uint16_t)bus_read(cpu->bus, VECTOR_RESET + 1) << 8);
+    cpu->S = 0xFD;
+    cpu->A = cpu->X = cpu->Y = 0x00; //our own policy 
+    cpu->P = 0x00 | (UNUSED | I); //disable interrupts during reset 
     cpu->irq = false;
     cpu->nmi = false;
 }

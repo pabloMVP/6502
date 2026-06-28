@@ -1,5 +1,6 @@
 #include "cpu.h"
 #include <stddef.h>
+#include <stdio.h>
 
 static const InstructionInfo instruction_table[256] = {
     // ADC (Add Memory to Accumulator with Carry)
@@ -66,6 +67,9 @@ static const InstructionInfo instruction_table[256] = {
     //CLD Clear Decimal Mode
     [0xD8] = { "CLD", op_cld, IMPLIED, 2},
 
+    //CLI Clear Interrupt Disable Bit
+    [0x58] = { "CLI", op_cli, IMPLIED, 1},
+
     //CLV Clear Overflow Flag
     [0xB8] = { "CLV", op_clv, IMPLIED, 2},
 
@@ -78,6 +82,16 @@ static const InstructionInfo instruction_table[256] = {
     [0xD9] = { "CMP", op_cmp, ABSOLUTE_Y_INDEXED, 3},
     [0xC1] = { "CMP", op_cmp, X_INDEXED_INDIRECT, 2},
     [0xD1] = { "CMP", op_cmp, INDIRECT_Y_INDEXED, 2},
+
+    //CPX Compare Memory and Index X
+    [0xE0] = { "CPX", op_cpx, IMMEDIATE, 2 },
+    [0xE4] = { "CPX", op_cpx, ZEROPAGE,  2 },
+    [0xEC] = { "CPX", op_cpx, ABSOLUTE,  3 },
+
+    //CPY Compare Memory and Index Y
+    [0xC0] = { "CPY", op_cpy, IMMEDIATE, 2 },
+    [0xC4] = { "CPY", op_cpy, ZEROPAGE,  2 },
+    [0xCC] = { "CPY", op_cpy, ABSOLUTE,  3 },
 
     //DEC Decrement Memory by One
     [0xC6] = { "DEC", op_dec, ZEROPAGE, 2},
@@ -231,7 +245,7 @@ static const InstructionInfo instruction_table[256] = {
 
     //STY Store Index Y in Memory
     [0x84] = { "STY", op_sty, ZEROPAGE, 2},
-    [0x94] = { "STY", op_sty, ZEROPAGE_Y_INDEXED, 2},
+    [0x94] = { "STY", op_sty, ZEROPAGE_X_INDEXED, 2},
     [0x8C] = { "STY", op_sty, ABSOLUTE, 3},
 
     //TAX Transfer Accumulator to Index X
@@ -263,6 +277,7 @@ static const InstructionInfo not_implemented = {
 
 const InstructionInfo *cpu_decode(const uint8_t opcode) {
     if (instruction_table[opcode].handler == NULL) {
+        fprintf(stderr, "Unimplemented opcode: %02X\n", opcode);
         return &not_implemented;
     }
 
@@ -279,26 +294,33 @@ void op_not_implemented(CPU *cpu, Operand *operand) {
 void op_adc(CPU *cpu, Operand *operand){
     uint8_t value = operand_read(cpu, operand);
     uint8_t carry = cpu_get_flag(cpu, C);
-
-    uint16_t result = value + cpu->A + carry;
-
-    uint8_t finalResult = (uint8_t)result;
-
+    uint8_t accumulator_old = cpu->A;
+    uint16_t result_bin = accumulator_old + value + carry;
+    uint8_t finalResult_bin = (uint8_t)result_bin;
+    if (cpu_get_flag(cpu, D) == true){
+        uint8_t result_low_dec = (value & 0x0F) + (accumulator_old & 0x0F) + carry;
+        if (result_low_dec > 0x09) result_low_dec += 6;
+        uint8_t result_high_dec = (value >> 4) + (accumulator_old >> 4) + (result_low_dec > 0x0F);
+        if (result_high_dec > 0x09) result_high_dec += 6;
+        cpu_set_flag(cpu, C, result_high_dec > 0x0F);
+        uint8_t result_dec = (result_high_dec << 4) | (result_low_dec & 0x0F);
+        cpu->A = result_dec;
+    }
+    else {
+        cpu_set_flag(cpu, C, result_bin > 0xFF);
+        cpu->A = finalResult_bin;
+    }
     // Set flags
-    cpu_set_flag(cpu, Z, finalResult == 0);
-    cpu_set_flag(cpu, N, (finalResult & 0x80) != 0);
-    cpu_set_flag(cpu, C, result > 0xFF);
-    if ((value & 0x80) == (cpu->A & 0x80))
+    cpu_set_flag(cpu, Z, finalResult_bin == 0);
+    cpu_set_flag(cpu, N, (finalResult_bin & 0x80) != 0);
+    if ((value & 0x80) == (accumulator_old & 0x80))
     {
-        cpu_set_flag(cpu, V, (value & 0x80) != (finalResult & 0x80));
+        cpu_set_flag(cpu, V, (value & 0x80) != (finalResult_bin & 0x80));
     }
     else
     {
         cpu_set_flag(cpu, V, false);
     }
-
-    // Update accumulator register
-    cpu->A = finalResult;
 }
 
 void op_and(CPU *cpu, Operand *operand){
@@ -582,28 +604,41 @@ void op_rts(CPU *cpu, Operand *operand){
 }
 
 void op_sbc(CPU *cpu, Operand *operand){
-    uint8_t value = ~operand_read(cpu, operand);
+    uint8_t value = operand_read(cpu, operand);
     uint8_t carry = cpu_get_flag(cpu, C);
+    uint8_t accumulator_old = cpu->A;
+    uint16_t result_bin = (uint8_t)~value + accumulator_old + carry;
 
-    uint16_t result = value + cpu->A + carry;
+    uint8_t finalResult_bin = (uint8_t)result_bin;
 
-    uint8_t finalResult = (uint8_t)result;
+    if (cpu_get_flag(cpu, D) == true){
+        int result_low_dec = (accumulator_old & 0x0F) - (value & 0x0F) - (1-carry);
+        int result_high_dec = (accumulator_old >> 4) - (value >> 4);
+        if (result_low_dec < 0) { 
+            result_high_dec -= 1;
+            result_low_dec +=10;
+        }
+        if (result_high_dec < 0){
+            result_high_dec += 10;
+        } 
+        cpu->A = ((result_high_dec & 0x0F) << 4) | (result_low_dec & 0x0F);
+    }
+    else {
+        cpu->A = finalResult_bin;
+    }
 
     // Set flags
-    cpu_set_flag(cpu, Z, finalResult == 0);
-    cpu_set_flag(cpu, N, (finalResult & 0x80) != 0);
-    cpu_set_flag(cpu, C, result > 0xFF);
-    if ((value & 0x80) == (cpu->A & 0x80))
+    cpu_set_flag(cpu, Z, finalResult_bin == 0);
+    cpu_set_flag(cpu, N, (finalResult_bin & 0x80) != 0);
+    cpu_set_flag(cpu, C, result_bin > 0xFF);
+    if ((~value & 0x80) == (accumulator_old & 0x80))
     {
-        cpu_set_flag(cpu, V, (value & 0x80) != (finalResult & 0x80));
+        cpu_set_flag(cpu, V, (~value & 0x80) != (finalResult_bin & 0x80));
     }
     else
     {
         cpu_set_flag(cpu, V, false);
     }
-
-    // Update accumulator register
-    cpu->A = finalResult;
 }
 
 void op_sec(CPU *cpu, Operand *operand){
