@@ -4,8 +4,7 @@ A functionally complete emulator of the MOS 6502 CPU, written in C. All 151
 official opcodes are implemented across every addressing mode, including BCD
 (decimal) mode and the BRK/IRQ/NMI interrupt sequence.
 
-It **passes Klaus Dormann's [6502 functional test](https://github.com/Klaus2m5/6502_65C02_functional_tests)**
-in full.
+It **passes Klaus Dormann's [6502 functional test](https://github.com/Klaus2m5/6502_65C02_functional_tests)**.
 
 ## Design
 
