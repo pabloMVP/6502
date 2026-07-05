@@ -565,7 +565,9 @@ void op_pla(CPU *cpu, Operand *operand){
 
 void op_plp(CPU *cpu, Operand *operand){
     uint8_t status = cpu_pull_byte(cpu);
-    status &= (0xFF & ~B) | UNUSED;
+    status &= ~B;        // break siempre a 0
+    status |= UNUSED;    // unused siempre a 1
+    cpu->P = status;
     cpu->P = status;
 }
 
@@ -589,7 +591,8 @@ void op_ror(CPU *cpu, Operand *operand){
 
 void op_rti(CPU *cpu, Operand *operand){
     uint8_t status = cpu_pull_byte(cpu);
-    status &= (0xFF & ~B) | UNUSED;
+    status &= ~B;        // break siempre a 0
+    status |= UNUSED;    // unused siempre a 1
     cpu->P = status;
     uint8_t pc_LL = cpu_pull_byte(cpu);
     uint8_t pc_HH = cpu_pull_byte(cpu);
