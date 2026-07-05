@@ -297,19 +297,8 @@ void op_adc(CPU *cpu, Operand *operand){
     uint8_t accumulator_old = cpu->A;
     uint16_t result_bin = accumulator_old + value + carry;
     uint8_t finalResult_bin = (uint8_t)result_bin;
-    if (cpu_get_flag(cpu, D) == true){
-        uint8_t result_low_dec = (value & 0x0F) + (accumulator_old & 0x0F) + carry;
-        if (result_low_dec > 0x09) result_low_dec += 6;
-        uint8_t result_high_dec = (value >> 4) + (accumulator_old >> 4) + (result_low_dec > 0x0F);
-        if (result_high_dec > 0x09) result_high_dec += 6;
-        cpu_set_flag(cpu, C, result_high_dec > 0x0F);
-        uint8_t result_dec = (result_high_dec << 4) | (result_low_dec & 0x0F);
-        cpu->A = result_dec;
-    }
-    else {
-        cpu_set_flag(cpu, C, result_bin > 0xFF);
-        cpu->A = finalResult_bin;
-    }
+    cpu_set_flag(cpu, C, result_bin > 0xFF);
+    cpu->A = finalResult_bin;
     // Set flags
     cpu_set_flag(cpu, Z, finalResult_bin == 0);
     cpu_set_flag(cpu, N, (finalResult_bin & 0x80) != 0);
@@ -613,22 +602,7 @@ void op_sbc(CPU *cpu, Operand *operand){
     uint16_t result_bin = (uint8_t)~value + accumulator_old + carry;
 
     uint8_t finalResult_bin = (uint8_t)result_bin;
-
-    if (cpu_get_flag(cpu, D) == true){
-        int result_low_dec = (accumulator_old & 0x0F) - (value & 0x0F) - (1-carry);
-        int result_high_dec = (accumulator_old >> 4) - (value >> 4);
-        if (result_low_dec < 0) { 
-            result_high_dec -= 1;
-            result_low_dec +=10;
-        }
-        if (result_high_dec < 0){
-            result_high_dec += 10;
-        } 
-        cpu->A = ((result_high_dec & 0x0F) << 4) | (result_low_dec & 0x0F);
-    }
-    else {
-        cpu->A = finalResult_bin;
-    }
+    cpu->A = finalResult_bin;
 
     // Set flags
     cpu_set_flag(cpu, Z, finalResult_bin == 0);
