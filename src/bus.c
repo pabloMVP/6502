@@ -7,7 +7,13 @@ void bus_write(Bus* bus, uint16_t addr, uint8_t val){
         case 0x0000 ... 0x1FFF:
             bus->ram[addr & 0x07FF] = val;
             break;
-        case 0x2000 ... 0x401F:
+        case 0x2000 ... 0x3FFF:
+        { 
+            uint8_t mirror_addr = addr & 0x0007;
+            ppu_write_register(bus->ppu, mirror_addr, val);
+            break;
+        }
+        case 0x4000 ... 0x401F:
             break;
         case 0x4020 ... 0x7FFF:
             break;
@@ -25,7 +31,11 @@ uint8_t bus_read(const Bus* bus, uint16_t addr){
         case 0x0000 ... 0x1FFF:
             return bus->ram[addr & 0x07FF];
             break;
-        case 0x2000 ... 0x401F:
+        case 0x2000 ... 0x3FFF:
+            uint8_t mirror_addr = addr & 0x0007;
+            return ppu_read_register(bus->ppu, mirror_addr);
+            break;
+        case 0x4000 ... 0x401F:
             return 0;
             break;
         case 0x4020 ... 0x7FFF:

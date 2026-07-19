@@ -4,9 +4,11 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include "cartridge.h"
+#include "ppu.h"
 
 typedef struct { 
     Cartridge* cart; 
+    PPU* ppu;
     uint8_t ram[2048]; 
 } Bus;
 
