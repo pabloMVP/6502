@@ -44,14 +44,14 @@ void ppu_write_register(PPU *ppu, uint16_t reg, uint8_t val){
         case (PPUADDR & 0x0007):
         {
             if (!ppu->w){
-                ppu->t = (uint16_t)val << 8;
+                ppu->t = (ppu->t & 0x00FF) | (val << 8);
                 ppu->w = true; 
             }
             else{
-                uint8_t hi_byte = ppu->t & 0xFF00;
-                ppu->t = (hi_byte << 8) | (0xFF & val);
+                ppu->t = (ppu->t & 0xFF00) |  val;
                 ppu->w = false;
-                ppu->t = ppu->v;
+                ppu->v = ppu->t;
+                ppu->v &= 0x3FFF;
             }
             break;
         }
