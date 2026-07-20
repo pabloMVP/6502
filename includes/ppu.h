@@ -38,4 +38,7 @@ void ppu_write_register(PPU *ppu, uint16_t reg, uint8_t val);
 uint8_t ppu_chr_read(PPU *ppu, uint16_t addr);
 void ppu_render_pattern_table(PPU *ppu, int table, uint8_t *fb);  // table 0 o 1
 
+void ppu_mem_write(PPU *ppu, uint16_t addr, uint8_t val);
+uint8_t ppu_mem_read(PPU *ppu, uint16_t addr);
+
 #endif // PPU_H

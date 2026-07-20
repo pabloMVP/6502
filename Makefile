@@ -1,7 +1,7 @@
 CC = cc
 CFLAGS = -std=c11 -Wall -Wextra -Wpedantic -Iincludes
 
-SRC = src/bus.c src/cpu.c src/instruction_table.c src/instruction_stubs.c src/cartridge.c
+SRC = src/bus.c src/cpu.c src/instruction_table.c src/instruction_stubs.c src/cartridge.c src/ppu.c
 TEST_SRC = tests/test_main.c tests/test_adc.c
 
 TEST_BIN = bin/tests
