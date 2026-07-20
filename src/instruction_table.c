@@ -4,267 +4,267 @@
 
 static const InstructionInfo instruction_table[256] = {
     // ADC (Add Memory to Accumulator with Carry)
-    [0x69] = { "ADC", op_adc, IMMEDIATE, 2},
-    [0x65] = { "ADC", op_adc, ZEROPAGE, 2},
-    [0x75] = { "ADC", op_adc, ZEROPAGE_X_INDEXED, 2},
-    [0x6D] = { "ADC", op_adc, ABSOLUTE, 3},
-    [0x7D] = { "ADC", op_adc, ABSOLUTE_X_INDEXED, 3},
-    [0x79] = { "ADC", op_adc, ABSOLUTE_Y_INDEXED, 3},
-    [0x61] = { "ADC", op_adc, X_INDEXED_INDIRECT, 2},
-    [0x71] = { "ADC", op_adc, INDIRECT_Y_INDEXED, 2},
+    [0x69] = { "ADC", op_adc, IMMEDIATE, 2, 2},
+    [0x65] = { "ADC", op_adc, ZEROPAGE, 2, 3},
+    [0x75] = { "ADC", op_adc, ZEROPAGE_X_INDEXED, 2, 4},
+    [0x6D] = { "ADC", op_adc, ABSOLUTE, 3, 4},
+    [0x7D] = { "ADC", op_adc, ABSOLUTE_X_INDEXED, 3, 4},
+    [0x79] = { "ADC", op_adc, ABSOLUTE_Y_INDEXED, 3, 4},
+    [0x61] = { "ADC", op_adc, X_INDEXED_INDIRECT, 2, 6},
+    [0x71] = { "ADC", op_adc, INDIRECT_Y_INDEXED, 2, 5},
 
     // AND (AND Memory with Accumulator)
-    [0x29] = { "AND", op_and, IMMEDIATE, 2},
-    [0x25] = { "AND", op_and, ZEROPAGE, 2},
-    [0x35] = { "AND", op_and, ZEROPAGE_X_INDEXED, 2},
-    [0x2D] = { "AND", op_and, ABSOLUTE, 3},
-    [0x3D] = { "AND", op_and, ABSOLUTE_X_INDEXED, 3},
-    [0x39] = { "AND", op_and, ABSOLUTE_Y_INDEXED, 3},
-    [0x21] = { "AND", op_and, X_INDEXED_INDIRECT, 2},
-    [0x31] = { "AND", op_and, INDIRECT_Y_INDEXED, 2},
+    [0x29] = { "AND", op_and, IMMEDIATE, 2, 2},
+    [0x25] = { "AND", op_and, ZEROPAGE, 2, 3},
+    [0x35] = { "AND", op_and, ZEROPAGE_X_INDEXED, 2, 4},
+    [0x2D] = { "AND", op_and, ABSOLUTE, 3, 4},
+    [0x3D] = { "AND", op_and, ABSOLUTE_X_INDEXED, 3, 4},
+    [0x39] = { "AND", op_and, ABSOLUTE_Y_INDEXED, 3, 4},
+    [0x21] = { "AND", op_and, X_INDEXED_INDIRECT, 2, 6},
+    [0x31] = { "AND", op_and, INDIRECT_Y_INDEXED, 2, 5},
 
     // ASL Shift Left One Bit (Memory or Accumulator)
-    [0x0A] = { "ASL", op_asl, ACCUMULATOR, 1},
-    [0x06] = { "ASL", op_asl, ZEROPAGE, 2},
-    [0x16] = { "ASL", op_asl, ZEROPAGE_X_INDEXED, 2},
-    [0x0E] = { "ASL", op_asl, ABSOLUTE, 3},
-    [0x1E] = { "ASL", op_asl, ABSOLUTE_X_INDEXED, 3},
+    [0x0A] = { "ASL", op_asl, ACCUMULATOR, 1, 2 },
+    [0x06] = { "ASL", op_asl, ZEROPAGE, 2, 5 },
+    [0x16] = { "ASL", op_asl, ZEROPAGE_X_INDEXED, 2, 6 },
+    [0x0E] = { "ASL", op_asl, ABSOLUTE, 3, 6 },
+    [0x1E] = { "ASL", op_asl, ABSOLUTE_X_INDEXED, 3, 7 },
     
     //BCC Branch on Carry Clear
-    [0x90] = { "BCC", op_bcc, RELATIVE, 2 },
+    [0x90] = { "BCC", op_bcc, RELATIVE, 2, 2},
     
     //BCS Branch on Carry Set
-    [0xB0] = { "BCS", op_bcs, RELATIVE, 2 },
+    [0xB0] = { "BCS", op_bcs, RELATIVE, 2, 2 },
 
     //BEQ Branch on Result Zero
-    [0xF0] = { "BEQ", op_beq, RELATIVE, 2 }, 
+    [0xF0] = { "BEQ", op_beq, RELATIVE, 2, 2 }, 
 
     //BIT Test Bits in Memory with Accumulator
-    [0x24] = { "BIT", op_bit, ZEROPAGE, 2 },
-    [0x2C] = { "BIT", op_bit, ABSOLUTE, 3 },
+    [0x24] = { "BIT", op_bit, ZEROPAGE, 2, 3 },
+    [0x2C] = { "BIT", op_bit, ABSOLUTE, 3, 4 },
 
     //BMI Branch on Result Minus
-    [0x30] = { "BMI", op_bmi, RELATIVE, 2 },
+    [0x30] = { "BMI", op_bmi, RELATIVE, 2, 2 },
   
     //BNE Branch on Result Not Zero
-    [0xD0] = { "BNE", op_bne, RELATIVE, 2 },
+    [0xD0] = { "BNE", op_bne, RELATIVE, 2, 2 },
 
     //BPL Branch on Result Plus
-    [0x10] = { "BPL", op_bpl, RELATIVE, 2 }, 
+    [0x10] = { "BPL", op_bpl, RELATIVE, 2, 2 }, 
 
     //BRK Force Break
-    [0x00] = { "BRK", op_brk, IMPLIED, 1},
+    [0x00] = { "BRK", op_brk, IMPLIED, 1, 7 },
 
     //BVC Branch on Overflow Clear
-    [0x50] = { "BVC", op_bvc, RELATIVE, 2},
+    [0x50] = { "BVC", op_bvc, RELATIVE, 2, 2},
 
     //BVS Branch on Overflow Set
-    [0x70] = { "BVS", op_bvs, RELATIVE, 2},
+    [0x70] = { "BVS", op_bvs, RELATIVE, 2, 2},
 
     //CLC Clear Carry Flag
-    [0x18] = { "CLC", op_clc, IMPLIED, 2},
+    [0x18] = { "CLC", op_clc, IMPLIED, 1, 2},
 
     //CLD Clear Decimal Mode
-    [0xD8] = { "CLD", op_cld, IMPLIED, 2},
+    [0xD8] = { "CLD", op_cld, IMPLIED, 1, 2},
 
     //CLI Clear Interrupt Disable Bit
-    [0x58] = { "CLI", op_cli, IMPLIED, 1},
+    [0x58] = { "CLI", op_cli, IMPLIED, 1, 2},
 
     //CLV Clear Overflow Flag
-    [0xB8] = { "CLV", op_clv, IMPLIED, 2},
+    [0xB8] = { "CLV", op_clv, IMPLIED, 1, 2},
 
     //CMP Compare Memory with Accumulator
-    [0xC9] = { "CMP", op_cmp, IMMEDIATE, 2},
-    [0xC5] = { "CMP", op_cmp, ZEROPAGE, 2},
-    [0xD5] = { "CMP", op_cmp, ZEROPAGE_X_INDEXED, 2},
-    [0xCD] = { "CMP", op_cmp, ABSOLUTE, 3},
-    [0xDD] = { "CMP", op_cmp, ABSOLUTE_X_INDEXED, 3},
-    [0xD9] = { "CMP", op_cmp, ABSOLUTE_Y_INDEXED, 3},
-    [0xC1] = { "CMP", op_cmp, X_INDEXED_INDIRECT, 2},
-    [0xD1] = { "CMP", op_cmp, INDIRECT_Y_INDEXED, 2},
+    [0xC9] = { "CMP", op_cmp, IMMEDIATE, 2, 2},
+    [0xC5] = { "CMP", op_cmp, ZEROPAGE, 2, 3},
+    [0xD5] = { "CMP", op_cmp, ZEROPAGE_X_INDEXED, 2, 4},
+    [0xCD] = { "CMP", op_cmp, ABSOLUTE, 3, 4},
+    [0xDD] = { "CMP", op_cmp, ABSOLUTE_X_INDEXED, 3, 4},
+    [0xD9] = { "CMP", op_cmp, ABSOLUTE_Y_INDEXED, 3, 4},
+    [0xC1] = { "CMP", op_cmp, X_INDEXED_INDIRECT, 2, 6},
+    [0xD1] = { "CMP", op_cmp, INDIRECT_Y_INDEXED, 2, 5},
 
     //CPX Compare Memory and Index X
-    [0xE0] = { "CPX", op_cpx, IMMEDIATE, 2 },
-    [0xE4] = { "CPX", op_cpx, ZEROPAGE,  2 },
-    [0xEC] = { "CPX", op_cpx, ABSOLUTE,  3 },
+    [0xE0] = { "CPX", op_cpx, IMMEDIATE, 2, 2},
+    [0xE4] = { "CPX", op_cpx, ZEROPAGE,  2, 3 },
+    [0xEC] = { "CPX", op_cpx, ABSOLUTE,  3, 4 },
 
     //CPY Compare Memory and Index Y
-    [0xC0] = { "CPY", op_cpy, IMMEDIATE, 2 },
-    [0xC4] = { "CPY", op_cpy, ZEROPAGE,  2 },
-    [0xCC] = { "CPY", op_cpy, ABSOLUTE,  3 },
+    [0xC0] = { "CPY", op_cpy, IMMEDIATE, 2, 2},
+    [0xC4] = { "CPY", op_cpy, ZEROPAGE,  2, 3 },
+    [0xCC] = { "CPY", op_cpy, ABSOLUTE,  3, 4 },
 
     //DEC Decrement Memory by One
-    [0xC6] = { "DEC", op_dec, ZEROPAGE, 2},
-    [0xD6] = { "DEC", op_dec, ZEROPAGE_X_INDEXED, 2},
-    [0xCE] = { "DEC", op_dec, ABSOLUTE, 3},
-    [0xDE] = { "DEC", op_dec, ABSOLUTE_X_INDEXED, 3},
+    [0xC6] = { "DEC", op_dec, ZEROPAGE, 2, 5},
+    [0xD6] = { "DEC", op_dec, ZEROPAGE_X_INDEXED, 2, 6},
+    [0xCE] = { "DEC", op_dec, ABSOLUTE, 3, 6},
+    [0xDE] = { "DEC", op_dec, ABSOLUTE_X_INDEXED, 3, 7},
 
     //DEX Decrement Index X by One
-    [0xCA] = { "DEX", op_dex, IMPLIED, 1},
+    [0xCA] = { "DEX", op_dex, IMPLIED, 1, 2},
 
     //DEY Decrement Index Y by One
-    [0x88] = { "DEY", op_dey, IMPLIED, 1},
+    [0x88] = { "DEY", op_dey, IMPLIED, 1, 2},
 
     //EOR Exclusive-OR Memory with Accumulator
-    [0x49] = { "EOR", op_eor, IMMEDIATE, 2},
-    [0x45] = { "EOR", op_eor, ZEROPAGE, 2},
-    [0x55] = { "EOR", op_eor, ZEROPAGE_X_INDEXED, 2},
-    [0x4D] = { "EOR", op_eor, ABSOLUTE, 3},
-    [0x5D] = { "EOR", op_eor, ABSOLUTE_X_INDEXED, 3},
-    [0x59] = { "EOR", op_eor, ABSOLUTE_Y_INDEXED, 3},
-    [0x41] = { "EOR", op_eor, X_INDEXED_INDIRECT, 2},
-    [0x51] = { "EOR", op_eor, INDIRECT_Y_INDEXED, 2},
+    [0x49] = { "EOR", op_eor, IMMEDIATE, 2, 2},
+    [0x45] = { "EOR", op_eor, ZEROPAGE, 2, 3},
+    [0x55] = { "EOR", op_eor, ZEROPAGE_X_INDEXED, 2, 4},
+    [0x4D] = { "EOR", op_eor, ABSOLUTE, 3, 4},
+    [0x5D] = { "EOR", op_eor, ABSOLUTE_X_INDEXED, 3, 4},
+    [0x59] = { "EOR", op_eor, ABSOLUTE_Y_INDEXED, 3, 4},
+    [0x41] = { "EOR", op_eor, X_INDEXED_INDIRECT, 2, 6},
+    [0x51] = { "EOR", op_eor, INDIRECT_Y_INDEXED, 2, 5},
 
     //INC Increment Memory by One
-    [0xE6] = { "INC", op_inc, ZEROPAGE, 2},
-    [0xF6] = { "INC", op_inc, ZEROPAGE_X_INDEXED, 2},
-    [0xEE] = { "INC", op_inc, ABSOLUTE, 3},
-    [0xFE] = { "INC", op_inc, ABSOLUTE_X_INDEXED, 3},
+    [0xE6] = { "INC", op_inc, ZEROPAGE, 2, 5},
+    [0xF6] = { "INC", op_inc, ZEROPAGE_X_INDEXED, 2, 6},
+    [0xEE] = { "INC", op_inc, ABSOLUTE, 3, 6},
+    [0xFE] = { "INC", op_inc, ABSOLUTE_X_INDEXED, 3, 7},
 
     //INX Increment Index X by One
-    [0xE8] = { "INX", op_inx, IMPLIED, 1},
+    [0xE8] = { "INX", op_inx, IMPLIED, 1, 2},
 
     //INY Increment Index Y by One
-    [0xC8] = { "INY", op_iny, IMPLIED, 1},
+    [0xC8] = { "INY", op_iny, IMPLIED, 1, 2},
 
     //JMP Jump to New Location
-    [0x4C] = { "JMP", op_jmp, ABSOLUTE, 3},
-    [0x6C] = { "JMP", op_jmp, INDIRECT, 3},
+    [0x4C] = { "JMP", op_jmp, ABSOLUTE, 3, 3},
+    [0x6C] = { "JMP", op_jmp, INDIRECT, 3, 5},
 
     //JSR Jump to New Location Saving Return Address
-    [0x20] = { "JSR", op_jsr, ABSOLUTE, 3},
+    [0x20] = { "JSR", op_jsr, ABSOLUTE, 3, 6},
 
     //LDA Load Accumulator with Memory
-    [0xA9] = { "LDA", op_lda, IMMEDIATE, 2 },
-    [0xA5] = { "LDA", op_lda, ZEROPAGE, 2 },
-    [0xB5] = { "LDA", op_lda, ZEROPAGE_X_INDEXED, 2 },
-    [0xAD] = { "LDA", op_lda, ABSOLUTE, 3 },
-    [0xBD] = { "LDA", op_lda, ABSOLUTE_X_INDEXED, 3 },
-    [0xB9] = { "LDA", op_lda, ABSOLUTE_Y_INDEXED, 3 },
-    [0xA1] = { "LDA", op_lda, X_INDEXED_INDIRECT, 2 },
-    [0xB1] = { "LDA", op_lda, INDIRECT_Y_INDEXED, 2 },
+    [0xA9] = { "LDA", op_lda, IMMEDIATE, 2, 2},
+    [0xA5] = { "LDA", op_lda, ZEROPAGE, 2, 3 },
+    [0xB5] = { "LDA", op_lda, ZEROPAGE_X_INDEXED, 2, 4 },
+    [0xAD] = { "LDA", op_lda, ABSOLUTE, 3, 4 },
+    [0xBD] = { "LDA", op_lda, ABSOLUTE_X_INDEXED, 3, 4 },
+    [0xB9] = { "LDA", op_lda, ABSOLUTE_Y_INDEXED, 3, 4 },
+    [0xA1] = { "LDA", op_lda, X_INDEXED_INDIRECT, 2, 6 },
+    [0xB1] = { "LDA", op_lda, INDIRECT_Y_INDEXED, 2, 5 },
 
     //LDX Load Index X with Memory
-    [0xA2] = { "LDX", op_ldx, IMMEDIATE, 2 },
-    [0xA6] = { "LDX", op_ldx, ZEROPAGE, 2 },
-    [0xB6] = { "LDX", op_ldx, ZEROPAGE_Y_INDEXED, 2 },
-    [0xAE] = { "LDX", op_ldx, ABSOLUTE, 3 },
-    [0xBE] = { "LDX", op_ldx, ABSOLUTE_Y_INDEXED, 3 },
+    [0xA2] = { "LDX", op_ldx, IMMEDIATE, 2, 2},
+    [0xA6] = { "LDX", op_ldx, ZEROPAGE, 2, 3 },
+    [0xB6] = { "LDX", op_ldx, ZEROPAGE_Y_INDEXED, 2, 4 },
+    [0xAE] = { "LDX", op_ldx, ABSOLUTE, 3, 4 },
+    [0xBE] = { "LDX", op_ldx, ABSOLUTE_Y_INDEXED, 3, 4 },
 
     //LDY Load Index X with Memory
-    [0xA0] = { "LDY", op_ldy, IMMEDIATE, 2 },
-    [0xA4] = { "LDY", op_ldy, ZEROPAGE, 2 },
-    [0xB4] = { "LDY", op_ldy, ZEROPAGE_X_INDEXED, 2 },
-    [0xAC] = { "LDY", op_ldy, ABSOLUTE, 3 },
-    [0xBC] = { "LDY", op_ldy, ABSOLUTE_X_INDEXED, 3 },
+    [0xA0] = { "LDY", op_ldy, IMMEDIATE, 2, 2 },
+    [0xA4] = { "LDY", op_ldy, ZEROPAGE, 2, 3 },
+    [0xB4] = { "LDY", op_ldy, ZEROPAGE_X_INDEXED, 2, 4 },
+    [0xAC] = { "LDY", op_ldy, ABSOLUTE, 3, 4 },
+    [0xBC] = { "LDY", op_ldy, ABSOLUTE_X_INDEXED, 3, 4 },
 
     //LSR Shift One Bit Right (Memory or Accumulator)
-    [0x4A] = { "LSR", op_lsr, ACCUMULATOR, 1 },
-    [0x46] = { "LSR", op_lsr, ZEROPAGE, 2 },
-    [0x56] = { "LSR", op_lsr, ZEROPAGE_X_INDEXED, 2 },
-    [0x4E] = { "LSR", op_lsr, ABSOLUTE, 3 },
-    [0x5E] = { "LSR", op_lsr, ABSOLUTE_X_INDEXED, 3 },
+    [0x4A] = { "LSR", op_lsr, ACCUMULATOR, 1, 2 },
+    [0x46] = { "LSR", op_lsr, ZEROPAGE, 2, 5 },
+    [0x56] = { "LSR", op_lsr, ZEROPAGE_X_INDEXED, 2, 6 },
+    [0x4E] = { "LSR", op_lsr, ABSOLUTE, 3, 6 },
+    [0x5E] = { "LSR", op_lsr, ABSOLUTE_X_INDEXED, 3, 7 },
 
     //NOP No Operation
-    [0xEA] = { "NOP", op_nop, IMPLIED, 1 },
+    [0xEA] = { "NOP", op_nop, IMPLIED, 1, 2 },
 
     //ORA OR Memory with Accumulator
-    [0x09] = { "ORA", op_ora, IMMEDIATE, 2 },
-    [0x05] = { "ORA", op_ora, ZEROPAGE, 2 },
-    [0x15] = { "ORA", op_ora, ZEROPAGE_X_INDEXED, 2 },
-    [0x0D] = { "ORA", op_ora, ABSOLUTE, 3 },
-    [0x1D] = { "ORA", op_ora, ABSOLUTE_X_INDEXED, 3 },
-    [0x19] = { "ORA", op_ora, ABSOLUTE_Y_INDEXED, 3 },
-    [0x01] = { "ORA", op_ora, X_INDEXED_INDIRECT, 2 },
-    [0x11] = { "ORA", op_ora, INDIRECT_Y_INDEXED, 2 },
+    [0x09] = { "ORA", op_ora, IMMEDIATE, 2, 2 },
+    [0x05] = { "ORA", op_ora, ZEROPAGE, 2, 3 },
+    [0x15] = { "ORA", op_ora, ZEROPAGE_X_INDEXED, 2, 4 },
+    [0x0D] = { "ORA", op_ora, ABSOLUTE, 3, 4 },
+    [0x1D] = { "ORA", op_ora, ABSOLUTE_X_INDEXED, 3, 4 },
+    [0x19] = { "ORA", op_ora, ABSOLUTE_Y_INDEXED, 3, 4 },
+    [0x01] = { "ORA", op_ora, X_INDEXED_INDIRECT, 2, 6 },
+    [0x11] = { "ORA", op_ora, INDIRECT_Y_INDEXED, 2, 5 },
 
     //PHA Push Accumulator on Stack 
-    [0x48] = { "PHA", op_pha, IMPLIED, 1 },
+    [0x48] = { "PHA", op_pha, IMPLIED, 1, 3 },
 
     //PHP Push Processor Status on Stack
-    [0x08] = { "PHP", op_php, IMPLIED, 1 },
+    [0x08] = { "PHP", op_php, IMPLIED, 1, 3 },
 
     //PLA Pull Accumulator from Stack
-    [0x68] = { "PLA", op_pla, IMPLIED, 1 },
+    [0x68] = { "PLA", op_pla, IMPLIED, 1, 4 },
 
     //PLP Pull Processor Status from Stack
-    [0x28] = { "PLP", op_plp, IMPLIED, 1 },
+    [0x28] = { "PLP", op_plp, IMPLIED, 1, 4 },
 
     //ROL Rotate One Bit Left (Memory or Accumulator)
-    [0x2A] = { "ROL", op_rol, ACCUMULATOR, 1 },
-    [0x26] = { "ROL", op_rol, ZEROPAGE, 2 },
-    [0x36] = { "ROL", op_rol, ZEROPAGE_X_INDEXED, 2 },
-    [0x2E] = { "ROL", op_rol, ABSOLUTE, 3 },
-    [0x3E] = { "ROL", op_rol, ABSOLUTE_X_INDEXED, 3 },
+    [0x2A] = { "ROL", op_rol, ACCUMULATOR, 1, 2 },
+    [0x26] = { "ROL", op_rol, ZEROPAGE, 2, 5 },
+    [0x36] = { "ROL", op_rol, ZEROPAGE_X_INDEXED, 2, 6 },
+    [0x2E] = { "ROL", op_rol, ABSOLUTE, 3, 6 },
+    [0x3E] = { "ROL", op_rol, ABSOLUTE_X_INDEXED, 3, 7 },
 
     //ROR Rotate One Bit Right (Memory or Accumulator)
-    [0x6A] = { "ROR", op_ror, ACCUMULATOR, 1 },
-    [0x66] = { "ROR", op_ror, ZEROPAGE, 2 },
-    [0x76] = { "ROR", op_ror, ZEROPAGE_X_INDEXED, 2 },
-    [0x6E] = { "ROR", op_ror, ABSOLUTE, 3 },
-    [0x7E] = { "ROR", op_ror, ABSOLUTE_X_INDEXED, 3 },
+    [0x6A] = { "ROR", op_ror, ACCUMULATOR, 1, 2 },
+    [0x66] = { "ROR", op_ror, ZEROPAGE, 2, 5 },
+    [0x76] = { "ROR", op_ror, ZEROPAGE_X_INDEXED, 2, 6 },
+    [0x6E] = { "ROR", op_ror, ABSOLUTE, 3, 6 },
+    [0x7E] = { "ROR", op_ror, ABSOLUTE_X_INDEXED, 3, 7 },
 
     //RTI Return from Interrupt
-    [0x40] = { "RTI", op_rti, IMPLIED, 1 },
+    [0x40] = { "RTI", op_rti, IMPLIED, 1, 6 },
     
     //RTS Return from Subroutine
-    [0x60] = { "RTS", op_rts, IMPLIED, 1 },
+    [0x60] = { "RTS", op_rts, IMPLIED, 1, 6 },
 
     //SBC Subtract Memory from Accumulator with Borrow
-    [0xE9] = { "SBC", op_sbc, IMMEDIATE, 2 },
-    [0xE5] = { "SBC", op_sbc, ZEROPAGE, 2 },
-    [0xF5] = { "SBC", op_sbc, ZEROPAGE_X_INDEXED, 2 },
-    [0xED] = { "SBC", op_sbc, ABSOLUTE, 3 },
-    [0xFD] = { "SBC", op_sbc, ABSOLUTE_X_INDEXED, 3 },
-    [0xF9] = { "SBC", op_sbc, ABSOLUTE_Y_INDEXED, 3 },
-    [0xE1] = { "SBC", op_sbc, X_INDEXED_INDIRECT, 2 },
-    [0xF1] = { "SBC", op_sbc, INDIRECT_Y_INDEXED, 2 },
+    [0xE9] = { "SBC", op_sbc, IMMEDIATE, 2, 2 },
+    [0xE5] = { "SBC", op_sbc, ZEROPAGE, 2, 3 },
+    [0xF5] = { "SBC", op_sbc, ZEROPAGE_X_INDEXED, 2, 4 },
+    [0xED] = { "SBC", op_sbc, ABSOLUTE, 3, 4 },
+    [0xFD] = { "SBC", op_sbc, ABSOLUTE_X_INDEXED, 3, 4 },
+    [0xF9] = { "SBC", op_sbc, ABSOLUTE_Y_INDEXED, 3, 4 },
+    [0xE1] = { "SBC", op_sbc, X_INDEXED_INDIRECT, 2, 6 },
+    [0xF1] = { "SBC", op_sbc, INDIRECT_Y_INDEXED, 2, 5 },
 
     //SEC Set Carry Flag
-    [0x38] = { "SEC", op_sec, IMPLIED, 1 },
+    [0x38] = { "SEC", op_sec, IMPLIED, 1, 2 },
 
     //SED Set Decimal Flag
-    [0xF8] = { "SED", op_sed, IMPLIED, 1 },
+    [0xF8] = { "SED", op_sed, IMPLIED, 1, 2 },
 
     //SEI Set Interrupt Flag
-    [0x78] = { "SEI", op_sei, IMPLIED, 1 },
+    [0x78] = { "SEI", op_sei, IMPLIED, 1, 2 },
 
     //STA Store Accumulator in Memory
-    [0x85] = { "STA", op_sta, ZEROPAGE, 2},
-    [0x95] = { "STA", op_sta, ZEROPAGE_X_INDEXED, 2},
-    [0x8D] = { "STA", op_sta, ABSOLUTE, 3},
-    [0x9D] = { "STA", op_sta, ABSOLUTE_X_INDEXED, 3},
-    [0x99] = { "STA", op_sta, ABSOLUTE_Y_INDEXED, 3},
-    [0x81] = { "STA", op_sta, X_INDEXED_INDIRECT, 2},
-    [0x91] = { "STA", op_sta, INDIRECT_Y_INDEXED, 2},
+    [0x85] = { "STA", op_sta, ZEROPAGE, 2, 3},
+    [0x95] = { "STA", op_sta, ZEROPAGE_X_INDEXED, 2, 4},
+    [0x8D] = { "STA", op_sta, ABSOLUTE, 3, 4},
+    [0x9D] = { "STA", op_sta, ABSOLUTE_X_INDEXED, 3, 5},
+    [0x99] = { "STA", op_sta, ABSOLUTE_Y_INDEXED, 3, 5},
+    [0x81] = { "STA", op_sta, X_INDEXED_INDIRECT, 2, 6},
+    [0x91] = { "STA", op_sta, INDIRECT_Y_INDEXED, 2, 6},
 
     //STX Store Index X in Memory
-    [0x86] = { "STX", op_stx, ZEROPAGE, 2},
-    [0x96] = { "STX", op_stx, ZEROPAGE_Y_INDEXED, 2},
-    [0x8E] = { "STX", op_stx, ABSOLUTE, 3},
+    [0x86] = { "STX", op_stx, ZEROPAGE, 2, 3},
+    [0x96] = { "STX", op_stx, ZEROPAGE_Y_INDEXED, 2, 4},
+    [0x8E] = { "STX", op_stx, ABSOLUTE, 3, 4},
 
     //STY Store Index Y in Memory
-    [0x84] = { "STY", op_sty, ZEROPAGE, 2},
-    [0x94] = { "STY", op_sty, ZEROPAGE_X_INDEXED, 2},
-    [0x8C] = { "STY", op_sty, ABSOLUTE, 3},
+    [0x84] = { "STY", op_sty, ZEROPAGE, 2, 3},
+    [0x94] = { "STY", op_sty, ZEROPAGE_X_INDEXED, 2, 4},
+    [0x8C] = { "STY", op_sty, ABSOLUTE, 3, 4},
 
     //TAX Transfer Accumulator to Index X
-    [0xAA] = { "TAX", op_tax, IMPLIED, 1 },
+    [0xAA] = { "TAX", op_tax, IMPLIED, 1, 2 },
 
     //TAY Transfer Accumulator to Index Y
-    [0xA8] = { "TAY", op_tay, IMPLIED, 1 },
+    [0xA8] = { "TAY", op_tay, IMPLIED, 1, 2 },
 
     //TSX Transfer Stack Pointer to Index X
-    [0xBA] = { "TSX", op_tsx, IMPLIED, 1 },
+    [0xBA] = { "TSX", op_tsx, IMPLIED, 1, 2 },
 
     //TXA Transfer Index X to Accumulator
-    [0x8A] = { "TXA", op_txa, IMPLIED, 1 },
+    [0x8A] = { "TXA", op_txa, IMPLIED, 1, 2 },
 
     //TXS Transfer Index X to Stack Register
-    [0x9A] = { "TXS", op_txs, IMPLIED, 1 },
+    [0x9A] = { "TXS", op_txs, IMPLIED, 1, 2 },
 
     //TYA Transfer Index Y to Accumulator
-    [0x98] = { "TYA", op_tya, IMPLIED, 1 },
+    [0x98] = { "TYA", op_tya, IMPLIED, 1, 2 },
 
 };
 

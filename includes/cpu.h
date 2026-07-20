@@ -55,6 +55,7 @@ typedef struct {
     InstructionHandler handler;
     ADDRESS_MODE address_mode;
     uint8_t bytes;
+    uint8_t base_cycles;
 } InstructionInfo;
 
 struct CPU {
